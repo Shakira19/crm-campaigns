@@ -7,6 +7,7 @@ package ec.edu.espe.banquito.crm.campaigns.repository;
 
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -15,5 +16,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findAll();
-    Campaign findById();
+    Optional<Campaign> findById();
 }

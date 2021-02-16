@@ -7,6 +7,7 @@ package ec.edu.espe.banquito.crm.campaigns.repository;
 
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -17,5 +18,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContactabilityRegistrationRepository extends JpaRepository<ContactabilityRegistration, Integer> {
     List<ContactabilityRegistration> findAll();
-    ContactabilityRegistration findById();
+    Optional<ContactabilityRegistration> findById();
 }
