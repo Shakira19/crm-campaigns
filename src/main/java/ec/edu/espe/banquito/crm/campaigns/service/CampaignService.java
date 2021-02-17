@@ -14,11 +14,14 @@ import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author cofre
  */
+
+@Service
 public class CampaignService {
     private final CampaignRepository campaignRepo;
     private final ContactabilityRegistrationRepository contactabilityRegistrationRepo;
@@ -29,7 +32,16 @@ public class CampaignService {
     }
     
     public List<Campaign> listarCampaigns() {
-        return this.campaignRepo.findAll();
+        return this.campaignRepo.findAll(); 
+    }
+    
+    public Campaign obtenerCampaignPorId(Integer id) throws RegistryNotFoundException {
+        Optional<Campaign> campaign = this.campaignRepo.findById(id);
+        if(campaign.isPresent()) {
+            return campaign.get();
+        } else {
+            throw new RegistryNotFoundException("No existe una campaña con el id: "+id);
+        }
     }
     
     public void crearCampaign(Campaign campaign) throws InsertException {
