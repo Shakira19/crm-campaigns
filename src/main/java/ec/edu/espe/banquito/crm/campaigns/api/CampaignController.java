@@ -119,6 +119,7 @@ public class CampaignController {
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
