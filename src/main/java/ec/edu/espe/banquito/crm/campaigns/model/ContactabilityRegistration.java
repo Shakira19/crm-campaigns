@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -24,27 +25,28 @@ import lombok.Setter;
  *
  * @author cofre
  */
-
 @Builder
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "contactabilityregistration")
+@Table(name = "contactabilityregistration", indexes = {
+    @Index(name = "idx_ctcreg_status", columnList = "status")})
 public class ContactabilityRegistration {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
     @Column(name = "id_client", length = 24)
     private String idClient;
-    
+
     @ManyToOne
     @JoinColumn(name = "id_campaign")
     private Campaign campaign;
-    
+
     @Column(name = "status")
     private String status;
 }

@@ -20,4 +20,7 @@ import org.springframework.stereotype.Repository;
 public interface ContactabilityRegistrationRepository extends JpaRepository<ContactabilityRegistration, Integer> {
     List<ContactabilityRegistration> findAll();
     Optional<ContactabilityRegistration> findById(Integer id);
+    
+    List<ContactabilityRegistration> findByStatusIs(String status);
+    List<ContactabilityRegistration> findByStatusIn(List<String> statuses);
 }
