@@ -22,7 +22,6 @@ import lombok.Setter;
  *
  * @author cofre
  */
-
 @Builder
 @Entity
 @Getter
@@ -31,14 +30,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "campaign")
 public class Campaign {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
     @Column(name = "name", length = 128)
     private String name;
-    
+
     @Column(name = "description", length = 256)
     private String description;
 }
