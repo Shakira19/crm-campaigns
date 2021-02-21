@@ -6,9 +6,6 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.api.dto;
 
-import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 
 /**
@@ -23,20 +20,4 @@ public class ContactabilityStatusRQ {
     private boolean inProgress;
     private boolean assigned;
 
-    public List<String> getStatusList() {
-        List<String> statuses = new ArrayList<>();
-        if (this.accepted) {
-            statuses.add(ContactStatusEnum.ACEPTADO.getStatus());
-        }
-        if (this.rejected) {
-            statuses.add(ContactStatusEnum.RECHAZADO.getStatus());
-        }
-        if (this.assigned) {
-            statuses.add(ContactStatusEnum.PENDIENTE.getStatus()); // CAMBIAR ESTADO
-        }
-        if (this.inProgress) {
-            statuses.add(ContactStatusEnum.CONTACTADO.getStatus()); // CAMBIAR ESTADO
-        }
-        return statuses;
-    }
 }
