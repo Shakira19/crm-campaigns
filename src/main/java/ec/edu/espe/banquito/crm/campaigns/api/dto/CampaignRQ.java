@@ -5,16 +5,21 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.api.dto;
 
+import java.sql.Date;
 import lombok.Data;
 
 /**
  *
  * @author cofre
  */
-
 @Data
 public class CampaignRQ {
-    private Integer Id;
+
     private String name;
     private String description;
+    private Date startDate;
+    private Date endDate;
+    private String urlTermsConditions;
+    private String region;
+
 }

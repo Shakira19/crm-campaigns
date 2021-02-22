@@ -6,9 +6,12 @@
 package ec.edu.espe.banquito.crm.campaigns.api;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
+import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
+import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.service.CampaignService;
 import java.util.ArrayList;
@@ -29,18 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author cofre
  */
-
 @RestController
 @RequestMapping("/api/campaigns")
 @Slf4j
 public class CampaignController {
-    
+
     private final CampaignService service;
-    
+
     public CampaignController(CampaignService service) {
-        this.service = service;         
+        this.service = service;
     }
-    
+
     @GetMapping
     public ResponseEntity listarCampaigns() {
         try {
@@ -48,7 +50,7 @@ public class CampaignController {
 
             this.service.listarCampaigns().forEach(items::add);
 
-            if (items.isEmpty()){
+            if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(items, HttpStatus.OK);
@@ -57,30 +59,36 @@ public class CampaignController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity obtenerCampaignPorId(@PathVariable Integer id) {
+    public ResponseEntity getCampaignById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(this.service.obtenerCampaignPorId(id));
+            return ResponseEntity.ok(this.service.getCampaignById(id));
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byName/{name}")
-    public ResponseEntity getCampaignByName(@PathVariable String name){
+
+    @GetMapping("/by-name/{name}")
+    public ResponseEntity getCampaignByName(@PathVariable String name) {
         log.info("The campaign that match it's name with {}, will be retrieved", name);
         return ResponseEntity.ok(this.service.getCampaignByName(name));
     }
-            
+
     @PostMapping
-    public ResponseEntity crearCampaign(@RequestBody CampaignRQ campaign) {
+    public ResponseEntity createCampaign(@RequestBody CampaignRQ campaign) {
         try {
-            this.service.crearCampaign(Campaign.builder()
-                                        .name(campaign.getName())
-                                        .description(campaign.getDescription()).build());
+            log.info("A new campaign will be created: {}", campaign);
+            this.service.createCampaign(Campaign.builder()
+                    .name(campaign.getName())
+                    .description(campaign.getDescription())
+                    .startDate(campaign.getStartDate())
+                    .endDate(campaign.getEndDate())
+                    .urlTermsConditions(campaign.getUrlTermsConditions())
+                    .region(campaign.getRegion())
+                    .build());
             return ResponseEntity.ok().build();
         } catch (InsertException e) {
             return ResponseEntity.badRequest().build();
@@ -88,22 +96,50 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity editarCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
+    public ResponseEntity editCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
         try {
-            Campaign campaign = this.service.obtenerCampaignPorId(id);
-            campaign.setName(campaignRq.getName());
-            campaign.setDescription(campaignRq.getDescription());
-            this.service.editarCampaign(campaign, id);
+            log.info("The campaign with id: {}, will be edited", id);
+            this.service.editCampaign(Campaign.builder()
+                    .name(campaignRq.getName())
+                    .description(campaignRq.getDescription())
+                    .startDate(campaignRq.getStartDate())
+                    .endDate(campaignRq.getEndDate())
+                    .urlTermsConditions(campaignRq.getUrlTermsConditions())
+                    .region(campaignRq.getRegion()).build(), id);
             return ResponseEntity.ok().build();
         } catch (RegistryNotFoundException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        } catch (UpdateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
+        String status;
+        if (statusRq.isActive()) {
+            status = CampaignStatusEnum.ACTIVE.getStatus();
+        } else if (statusRq.isSuspended()) {
+            status = CampaignStatusEnum.SUSPENDED.getStatus();
+        } else if (statusRq.isTerminated()) {
+            status = CampaignStatusEnum.TERMINATED.getStatus();
+        } else {
+            log.error("No/Bad status defined in HTTP Request to update campaign statuts");
+            return ResponseEntity.badRequest().body("No/Bad status defined in HTTP Request to update campaign statuts");
+        }
+        try {
+            log.info("The status of product with id: {}, will be updated", id);
+            this.service.updateCampaignStatus(id, status);
+            return ResponseEntity.ok().build();
+        } catch (RegistryNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (UpdateException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping("/asignar-cliente/{id}")
     public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam String clientId) {
         try {
@@ -115,7 +151,7 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @PutMapping("/actualizar-contacto/{id}")
     public ResponseEntity actualizarContacto(@PathVariable Integer id, @RequestParam String status) {
         try {
