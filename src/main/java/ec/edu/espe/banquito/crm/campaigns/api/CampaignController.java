@@ -16,8 +16,6 @@ import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.service.CampaignService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +71,7 @@ public class CampaignController {
         }
     }
 
-    @GetMapping("/byName/{name}")
+    @GetMapping("/by-name/{name}")
     public ResponseEntity getCampaignByName(@PathVariable String name) {
         log.info("The campaign that match it's name with {}, will be retrieved", name);
         return ResponseEntity.ok(this.service.getCampaignByName(name));
@@ -118,7 +116,7 @@ public class CampaignController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update-status/{id}")
     public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
         String status;
         if (statusRq.isActive()) {
@@ -128,8 +126,8 @@ public class CampaignController {
         } else if (statusRq.isTerminated()) {
             status = CampaignStatusEnum.TERMINATED.getStatus();
         } else {
-            log.error("No status defined in HTTP Request to update campaign statuts");
-            return ResponseEntity.badRequest().body("New status was not indicated");
+            log.error("No/Bad status defined in HTTP Request to update campaign statuts");
+            return ResponseEntity.badRequest().body("No/Bad status defined in HTTP Request to update campaign statuts");
         }
         try {
             log.info("The status of product with id: {}, will be updated", id);

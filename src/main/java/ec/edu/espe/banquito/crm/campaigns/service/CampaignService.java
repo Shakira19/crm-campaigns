@@ -92,7 +92,7 @@ public class CampaignService {
             String oldStatus = editedCampaign.getStatus();
             editedCampaign.setStatus(newStatus);
             this.campaignRepo.save(editedCampaign);
-            log.info("The status campaign with id: {}, was edited from {} to {}", id, oldStatus, newStatus);
+            log.info("The status campaign with id: {}, was updated from {} to {}", id, oldStatus, newStatus);
         } catch (RegistryNotFoundException e) {
             log.error("The campaign with id: {}, was not found to update its status", id);
             throw new RegistryNotFoundException("The campaign with id:" + id + ", was not found to update its status");
