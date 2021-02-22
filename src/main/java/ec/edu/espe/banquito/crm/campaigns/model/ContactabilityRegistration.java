@@ -26,7 +26,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "contactabilityregistration", indexes = {
-    @Index(name = "idx_ctcreg_status", columnList = "status")})
+    @Index(name = "idx_ctcreg_status", columnList = "status"),
+    @Index(name = "idx_ctcreg_clientIdentification", columnList = "client_identification")})
 public class ContactabilityRegistration {
 
     @Id
@@ -34,27 +35,29 @@ public class ContactabilityRegistration {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "id_client", length = 24)
-    private String idClient;
-    
+    @Column(name = "client_id", length = 24)
+    private String clientId;
+
+    @Column(name = "client_identification", length = 13)
+    private String clientIdentification;
+
     @Column(name = "client_name", length = 128)
     private String clientName;
 
     @Column(name = "client_surname", length = 128)
     private String clientSurname;
-    
+
     @Column(name = "client_phone", length = 128)
     private String clientPhone;
-    
+
     @Column(name = "client_email", length = 128)
     private String clientEmail;
-    
+
     @ManyToOne
     @JoinColumn(name = "id_campaign")
     private Campaign campaign;
 
     @Column(name = "status", length = 3)
     private String status;
-    
-    
+
 }

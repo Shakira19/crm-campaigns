@@ -10,10 +10,10 @@ package ec.edu.espe.banquito.crm.campaigns.enums;
  * @author cofre
  */
 public enum ContactStatusEnum {
-    PENDIENTE("PEN", "PENDIENTE"),
-    CONTACTADO("CON", "CONTACTADO"),
-    RECHAZADO("REC", "RECHAZADO"),
-    ACEPTADO("ACE", "ACEPTADO");
+    ASSIGNED("PEN", "PENDIENTE"),
+    INPROGRESS("CON", "CONTACTADO"),
+    REJECTED("REC", "RECHAZADO"),
+    ACCEPTED("ACE", "ACEPTADO");
     
     private final String status;
     private final String description;
