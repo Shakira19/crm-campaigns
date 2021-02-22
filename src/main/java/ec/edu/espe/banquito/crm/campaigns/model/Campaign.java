@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ec.edu.espe.banquito.crm.campaigns.model;
 
+
+import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,4 +38,36 @@ public class Campaign {
     
     @Column(name = "description", length = 256)
     private String description;
+    
+    @Column(name = "startDate")
+    private Date startDate;
+    
+    @Column(name = "endDate")
+    private Date endDate;
+    
+    @Column(name = "totalNumberClients")
+    private Integer totalNumberClients;
+    
+    @Column(name = "assignedClientsNumber")
+    private Integer numberAssignedClients;
+    
+    @Column(name = "clientsInProgressNumber")
+    private Integer numberClientsInProgress;
+    
+    @Column(name = "rejectedClientsNumber")
+    private Integer numberReejectedClients;
+    
+    @Column(name = "status", length = 3)
+    private String status;
+    
+    @Column(name = "urlTermsConditions", length = 256)
+    private String urlTermsConditions;
+    
+    @Column(name = "region", length = 3)
+    private String region;
+    
+    @Column(name = "kindProduct", length = 3)
+    private String kindProduct;
+    
+    
 }
