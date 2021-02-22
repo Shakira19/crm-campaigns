@@ -85,4 +85,8 @@ public class CampaignService {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: "+contactabilityId);
         }
     }
+    
+    public List<Campaign> getCampaignByName(String name){
+        return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
+    }
 }

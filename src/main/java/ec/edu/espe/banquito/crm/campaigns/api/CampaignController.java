@@ -10,7 +10,6 @@ import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
-import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.service.CampaignService;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +67,12 @@ public class CampaignController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    @GetMapping("/byName/{name}")
+    public ResponseEntity getCampaignByName(@PathVariable String name){
+        log.info("The campaign that match it's name with {}, will be retrieved", name);
+        return ResponseEntity.ok(this.service.getCampaignByName(name));
     }
             
     @PostMapping
