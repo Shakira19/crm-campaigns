@@ -45,16 +45,16 @@ public class Campaign {
     @Column(name = "endDate")
     private Date endDate;
     
-    @Column(name = "totalNumberClients")
+    @Column(name = "total_number_clients")
     private Integer totalNumberClients;
     
-    @Column(name = "assignedClientsNumber")
+    @Column(name = "assigned_clients_number")
     private Integer numberAssignedClients;
     
-    @Column(name = "clientsInProgressNumber")
+    @Column(name = "clients_in_progress_number")
     private Integer numberClientsInProgress;
     
-    @Column(name = "rejectedClientsNumber")
+    @Column(name = "rejected_clients_number")
     private Integer numberReejectedClients;
     
     @Column(name = "status", length = 3)

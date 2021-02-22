@@ -37,11 +37,25 @@ public class ContactabilityRegistration {
 
     @Column(name = "id_client", length = 24)
     private String idClient;
+    
+    @Column(name = "client_name", length = 128)
+    private String clientName;
 
+    @Column(name = "client_surname", length = 128)
+    private String clientSurname;
+    
+    @Column(name = "client_phone", length = 128)
+    private String clientPhone;
+    
+    @Column(name = "client_email", length = 128)
+    private String clientEmail;
+    
     @ManyToOne
     @JoinColumn(name = "id_campaign")
     private Campaign campaign;
 
-    @Column(name = "status")
+    @Column(name = "status", length = 3)
     private String status;
+    
+    
 }
