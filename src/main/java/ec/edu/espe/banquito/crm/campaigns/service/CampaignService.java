@@ -14,6 +14,7 @@ import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
+import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,16 +39,17 @@ public class CampaignService {
         return this.campaignRepo.findAll();
     }
 
-    public Campaign obtenerCampaignPorId(Integer id) throws RegistryNotFoundException {
+    public Campaign getCampaignById(Integer id) throws RegistryNotFoundException {
         Optional<Campaign> campaign = this.campaignRepo.findById(id);
         if (campaign.isPresent()) {
             return campaign.get();
         } else {
-            throw new RegistryNotFoundException("No existe una campaña con el id: " + id);
+            log.error("The campaign with id: {} does not exists", id);
+            throw new RegistryNotFoundException("The campaign with id" + id + " does not exists");
         }
     }
 
-    public void crearCampaign(Campaign campaign) throws InsertException {
+    public void createCampaign(Campaign campaign) throws InsertException {
         try {
             campaign.setStatus(CampaignStatusEnum.ACTIVE.getStatus());
             campaign.setTotalNumberClients(0);
@@ -63,10 +65,9 @@ public class CampaignService {
         }
     }
 
-    public void editarCampaign(Campaign campaign, Integer id) throws RegistryNotFoundException {
-        Optional<Campaign> campaignToEdit = this.campaignRepo.findById(id);
-        if (campaignToEdit.isPresent()) {
-            Campaign editedCampaign = campaignToEdit.get();
+    public void editCampaign(Campaign campaign, Integer id) throws RegistryNotFoundException, UpdateException {
+        try {
+            Campaign editedCampaign = this.getCampaignById(id);
             editedCampaign.setName(campaign.getName());
             editedCampaign.setDescription(campaign.getDescription());
             editedCampaign.setStartDate(campaign.getStartDate());
@@ -75,9 +76,29 @@ public class CampaignService {
             editedCampaign.setRegion(campaign.getRegion());
             this.campaignRepo.save(editedCampaign);
             log.info("The campaign with id: {}, was edited", id);
-        } else {
+        } catch (RegistryNotFoundException e) {
             log.error("The campaign with id: {}, was not found to be edited", id);
             throw new RegistryNotFoundException("The campaign with id:" + id + ", was not found to be edited");
+        } catch (Exception e) {
+            log.error("An error occured when trying to update campaign with id: {}", id);
+            throw new UpdateException("campaigns", "An error occured when trying to update campaign with id: " + id, e);
+        }
+
+    }
+
+    public void updateCampaignStatus(Integer id, String newStatus) throws RegistryNotFoundException, UpdateException {
+        try {
+            Campaign editedCampaign = this.getCampaignById(id);
+            String oldStatus = editedCampaign.getStatus();
+            editedCampaign.setStatus(newStatus);
+            this.campaignRepo.save(editedCampaign);
+            log.info("The status campaign with id: {}, was edited from {} to {}", id, oldStatus, newStatus);
+        } catch (RegistryNotFoundException e) {
+            log.error("The campaign with id: {}, was not found to update its status", id);
+            throw new RegistryNotFoundException("The campaign with id:" + id + ", was not found to update its status");
+        } catch (Exception e) {
+            log.error("An error occured when trying to update the status of campaign with id: {}", id);
+            throw new UpdateException("campaigns", "An error occured when trying to update the status of campaign with id: " + id, e);
         }
     }
 

@@ -6,13 +6,18 @@
 package ec.edu.espe.banquito.crm.campaigns.api;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
+import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
+import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.service.CampaignService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,9 +63,9 @@ public class CampaignController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity obtenerCampaignPorId(@PathVariable Integer id) {
+    public ResponseEntity getCampaignById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(this.service.obtenerCampaignPorId(id));
+            return ResponseEntity.ok(this.service.getCampaignById(id));
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
@@ -75,10 +80,10 @@ public class CampaignController {
     }
 
     @PostMapping
-    public ResponseEntity crearCampaign(@RequestBody CampaignRQ campaign) {
+    public ResponseEntity createCampaign(@RequestBody CampaignRQ campaign) {
         try {
             log.info("A new campaign will be created: {}", campaign);
-            this.service.crearCampaign(Campaign.builder()
+            this.service.createCampaign(Campaign.builder()
                     .name(campaign.getName())
                     .description(campaign.getDescription())
                     .startDate(campaign.getStartDate())
@@ -95,9 +100,10 @@ public class CampaignController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity editarCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
+    public ResponseEntity editCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
         try {
-            this.service.editarCampaign(Campaign.builder()
+            log.info("The campaign with id: {}, will be edited", id);
+            this.service.editCampaign(Campaign.builder()
                     .name(campaignRq.getName())
                     .description(campaignRq.getDescription())
                     .startDate(campaignRq.getStartDate())
@@ -107,7 +113,31 @@ public class CampaignController {
             return ResponseEntity.ok().build();
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (UpdateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
+        String status;
+        if (statusRq.isActive()) {
+            status = CampaignStatusEnum.ACTIVE.getStatus();
+        } else if (statusRq.isSuspended()) {
+            status = CampaignStatusEnum.SUSPENDED.getStatus();
+        } else if (statusRq.isTerminated()) {
+            status = CampaignStatusEnum.TERMINATED.getStatus();
+        } else {
+            log.error("No status defined in HTTP Request to update campaign statuts");
+            return ResponseEntity.badRequest().body("New status was not indicated");
+        }
+        try {
+            log.info("The status of product with id: {}, will be updated", id);
+            this.service.updateCampaignStatus(id, status);
+            return ResponseEntity.ok().build();
+        } catch (RegistryNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (UpdateException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
