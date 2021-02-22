@@ -20,4 +20,6 @@ import org.springframework.stereotype.Repository;
 public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findAll();
     Optional<Campaign> findById(Integer id);
+    
+    List<Campaign> findByNameLikeIgnoreCaseOrderByNameAsc(String name);
 }
