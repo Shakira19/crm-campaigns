@@ -5,6 +5,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
@@ -26,19 +27,19 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class CampaignService {
-
+    
     private final CampaignRepository campaignRepo;
     private final ContactabilityRegistrationRepository contactabilityRegistrationRepo;
-
+    
     public CampaignService(CampaignRepository campaignRepo, ContactabilityRegistrationRepository contactabilityRegistrationRepo) {
         this.campaignRepo = campaignRepo;
         this.contactabilityRegistrationRepo = contactabilityRegistrationRepo;
     }
-
+    
     public List<Campaign> listarCampaigns() {
         return this.campaignRepo.findAll();
     }
-
+    
     public Campaign getCampaignById(Integer id) throws RegistryNotFoundException {
         Optional<Campaign> campaign = this.campaignRepo.findById(id);
         if (campaign.isPresent()) {
@@ -48,7 +49,11 @@ public class CampaignService {
             throw new RegistryNotFoundException("The campaign with id" + id + " does not exists");
         }
     }
-
+    
+    public List<Campaign> getCampaignByName(String name) {
+        return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
+    }
+    
     public void createCampaign(Campaign campaign) throws InsertException {
         try {
             campaign.setStatus(CampaignStatusEnum.ACTIVE.getStatus());
@@ -64,7 +69,7 @@ public class CampaignService {
             throw new InsertException("campaign", "The campaign {} could not be created");
         }
     }
-
+    
     public void editCampaign(Campaign campaign, Integer id) throws RegistryNotFoundException, UpdateException {
         try {
             Campaign editedCampaign = this.getCampaignById(id);
@@ -83,9 +88,9 @@ public class CampaignService {
             log.error("An error occured when trying to update campaign with id: {}", id);
             throw new UpdateException("campaigns", "An error occured when trying to update campaign with id: " + id, e);
         }
-
+        
     }
-
+    
     public void updateCampaignStatus(Integer id, String newStatus) throws RegistryNotFoundException, UpdateException {
         try {
             Campaign editedCampaign = this.getCampaignById(id);
@@ -101,20 +106,31 @@ public class CampaignService {
             throw new UpdateException("campaigns", "An error occured when trying to update the status of campaign with id: " + id, e);
         }
     }
-
-    public void asignarCliente(Integer id, String clientId) throws RegistryNotFoundException {
-        Optional<Campaign> campaignToRegister = this.campaignRepo.findById(id);
-        if (campaignToRegister.isPresent()) {
+    
+    public void assignClient(Integer id, ClientCampaignRQ client) throws RegistryNotFoundException, InsertException {
+        
+        try {
+            Campaign campaignToRegister = this.getCampaignById(id);
             ContactabilityRegistration contactabilityRegistration = ContactabilityRegistration.builder()
-                    .campaign(campaignToRegister.get())
-                    .idClient(clientId)
-                    .status(ContactStatusEnum.PENDIENTE.getStatus()).build();
+                    .campaign(campaignToRegister)
+                    .clientId(client.getClientId())
+                    .clientIdentification(client.getClientIdentification())
+                    .clientName(client.getClientName())
+                    .clientSurname(client.getClientSurname())
+                    .clientPhone(client.getClientPhone())
+                    .clientEmail(client.getClientEmail())
+                    .status(ContactStatusEnum.ASSIGNED.getStatus()).build();
             this.contactabilityRegistrationRepo.save(contactabilityRegistration);
-        } else {
-            throw new RegistryNotFoundException("No se pudo encontrar una campaña con el id: " + id);
+            log.info("New contactability registry of client {} in campaign with id: {}, was created", client, id);
+        } catch (RegistryNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("There was an error creating contactability registry of client {} in campaign with id {}", client, id);
+            throw new InsertException("contactablityRegistration", "There was an error creating contactability registry of client " + client + " in campaign with id " + id, e);
         }
+        
     }
-
+    
     public void actualizarContacto(Integer contactabilityId, ContactStatusEnum status) throws RegistryNotFoundException {
         Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
         if (contactabilityToUpdate.isPresent()) {
@@ -125,8 +141,5 @@ public class CampaignService {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
         }
     }
-
-    public List<Campaign> getCampaignByName(String name) {
-        return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
-    }
+    
 }

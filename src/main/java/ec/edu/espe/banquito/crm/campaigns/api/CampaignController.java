@@ -7,6 +7,7 @@ package ec.edu.espe.banquito.crm.campaigns.api;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
+import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
@@ -140,10 +141,10 @@ public class CampaignController {
         }
     }
 
-    @PostMapping("/asignar-cliente/{id}")
-    public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam String clientId) {
+    @PostMapping("/assign-client/{id}")
+    public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam ClientCampaignRQ client) {
         try {
-            this.service.asignarCliente(id, clientId);
+            this.service.assignClient(id, client);
             return ResponseEntity.ok().build();
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
