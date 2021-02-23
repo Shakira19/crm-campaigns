@@ -5,6 +5,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.api;
 
+import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignDateRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
@@ -38,20 +39,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/campaigns")
 @Slf4j
 public class CampaignController {
-    
+
     private final CampaignService service;
-    
+
     public CampaignController(CampaignService service) {
         this.service = service;
     }
-    
+
     @GetMapping
     public ResponseEntity listarCampaigns() {
         try {
             List<Campaign> items = new ArrayList<Campaign>();
-            
+
             this.service.listarCampaigns().forEach(items::add);
-            
+
             if (items.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -61,7 +62,7 @@ public class CampaignController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity getCampaignById(@PathVariable Integer id) {
         try {
@@ -72,63 +73,45 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GetMapping("/by-name/{name}")
     public ResponseEntity getCampaignByName(@PathVariable String name) {
         log.info("The campaign that match it's name with {}, will be retrieved", name);
         return ResponseEntity.ok(this.service.getCampaignByName(name));
     }
-    
-    @GetMapping("/by-start-date/{date}")
-    public ResponseEntity getCampaignByStartDate(@PathVariable Date date) {
-        log.info("The campaigns with start date {} will be retrieved", date);
-        try {
-            return ResponseEntity.ok(this.service.getCampaignByStartDate(date));
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.notFound().build();
+
+    @GetMapping("/by-start-date")
+    public ResponseEntity getCampaignByStartDateBetween(@RequestBody CampaignDateRQ dateRq) {
+        ResponseEntity response;
+        if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
+            try {
+                log.info("The campaigns with start date between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
+                response = ResponseEntity.ok(this.service.getCampaignByStartDateBetween(dateRq.getStartDate(), dateRq.getEndDate()));
+            } catch (RegistryNotFoundException e) {
+                response = ResponseEntity.notFound().build();
+            }
+        } else {
+            response = ResponseEntity.badRequest().build();
         }
+        return response;
     }
-    
-    @GetMapping("/by-end-date/{date}")
-    public ResponseEntity getCampaignByEndDate(@PathVariable Date date) {
-        log.info("The campaigns with start date {} will be retrieved", date);
-        try {
-            return ResponseEntity.ok(this.service.getCampaignByEndDate(date));
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.notFound().build();
+
+    @GetMapping("/by-end-date")
+    public ResponseEntity getCampaignByEndDateBetween(@RequestBody CampaignDateRQ dateRq) {
+        ResponseEntity response;
+        if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
+            try {
+                log.info("The campaigns with end date between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
+                response = ResponseEntity.ok(this.service.getCampaignByEndDateBetween(dateRq.getStartDate(), dateRq.getEndDate()));
+            } catch (RegistryNotFoundException e) {
+                response = ResponseEntity.notFound().build();
+            }
+        } else {
+            response = ResponseEntity.badRequest().build();
         }
+        return response;
     }
-    
-    @GetMapping("/by-start-date-between/{from}/{to}")
-    public ResponseEntity getCampaignByStartDateBetween(@PathVariable Date from, @PathVariable Date to) {
-        log.info("The campaigns with start date between {} and {} will be retrieved", from, to);
-        try {
-            return ResponseEntity.ok(this.service.getCampaignByStartDateBetween(from, to));
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @GetMapping("/by-end-date-between/{from}/{to}")
-    public ResponseEntity getCampaignByEndDateBetween(@PathVariable Date from, @PathVariable Date to) {
-        log.info("The campaigns with end date between {} and {} will be retrieved", from, to);
-        try {
-            return ResponseEntity.ok(this.service.getCampaignByEndDateBetween(from, to));
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @GetMapping("/by-start-end-date/{from}/{to}")
-    public ResponseEntity getCampaignByStartEndDate(@PathVariable Date from, @PathVariable Date to) {
-        log.info("The campaigns between {} and {} will be retrieved", from, to);
-        try {
-            return ResponseEntity.ok(this.service.getCampaignByStartDateAndEndDate(from, to));
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
+
     @PostMapping
     public ResponseEntity createCampaign(@RequestBody CampaignRQ campaign) {
         try {
@@ -148,7 +131,7 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    
+
     @PutMapping("/{id}")
     public ResponseEntity editCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
         try {
@@ -167,7 +150,7 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @PutMapping("/update-status/{id}")
     public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
         String status;
@@ -191,7 +174,7 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @PostMapping("/assign-client/{id}")
     public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam ClientCampaignRQ client) {
         try {
@@ -203,7 +186,7 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @PutMapping("/actualizar-contacto/{id}")
     public ResponseEntity actualizarContacto(@PathVariable Integer id, @RequestParam String status) {
         try {

@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -25,14 +27,8 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
 
     List<Campaign> findByNameLikeIgnoreCaseOrderByNameAsc(String name);
 
-    List<Campaign> findByStartDate(Date date);
+    List<Campaign> findByStartDateBetween(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd") @Param("to") Date to);
 
-    List<Campaign> findByEndDate(Date date);
-    
-    List<Campaign> findByStartDateBetween(Date from, Date to);
-
-    List<Campaign> findByEndDateBetween(Date from, Date to);
-
-    List<Campaign> findByStartDateAndEndDate(Date startDate, Date endDate);
+    List<Campaign> findByEndDateBetween(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd") @Param("to") Date to);
 
 }
