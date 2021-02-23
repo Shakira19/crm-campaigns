@@ -15,6 +15,7 @@ import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
+import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import java.util.Date;
 import java.util.Optional;
@@ -162,6 +163,15 @@ public class CampaignService {
             this.contactabilityRegistrationRepo.save(updatedContactability);
         } else {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
+        }
+    }
+    
+    public List<Campaign> getCampaignsByRegion(String region) {
+        List<Campaign> campaigns = this.campaignRepo.findByRegion(region);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con region: "+region);
         }
     }
 
