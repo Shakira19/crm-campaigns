@@ -7,9 +7,13 @@
 package ec.edu.espe.banquito.crm.campaigns.service;
 
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
+import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
 import ec.edu.espe.banquito.crm.campaigns.repository.ContactabilityRegistrationRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +24,20 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class ContactabilityRegistrationService {
+
+    private final CampaignRepository campaignRepo;
     private final ContactabilityRegistrationRepository contactabilityRegistrationRepo;
 
-    public ContactabilityRegistrationService(ContactabilityRegistrationRepository contactabilityRegistrationRepo) {
+    public ContactabilityRegistrationService(CampaignRepository campaignRepo, ContactabilityRegistrationRepository contactabilityRegistrationRepo) {
+        this.campaignRepo = campaignRepo;
         this.contactabilityRegistrationRepo = contactabilityRegistrationRepo;
     }
-    
-    public List<ContactabilityRegistration> getContactabilityRegistryByStatus(String status){        
+
+    public List<ContactabilityRegistration> getContactabilityRegistryByStatus(String status) {
         return this.contactabilityRegistrationRepo.findByStatusIs(status);
     }
-    
-    public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses){
+
+    public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses) {
         return this.contactabilityRegistrationRepo.findByStatusIn(statuses);
     }
     
@@ -40,6 +47,20 @@ public class ContactabilityRegistrationService {
             return contactabilities;
         } else {
             throw new NotFoundException("No se encontraron registros que contengan el email: "+email);
+        }
+    }
+
+    public List<ContactabilityRegistration> getContactabilityRegistryByClientIdentification(String clientIdentification) {
+        return this.contactabilityRegistrationRepo.findByClientIdentificationOrderByClientSurnameDesc(clientIdentification);
+    }
+
+    public ContactabilityRegistration getContactabilityRegistryByClientIdentificationAndCampaign(String identification, Integer campaignId) throws RegistryNotFoundException {
+        Optional<Campaign> campaign = this.campaignRepo.findById(campaignId);
+        if (campaign.isPresent()) {
+            return this.contactabilityRegistrationRepo.findByClientIdentificationAndCampaign(identification, campaign.get());
+        } else {
+            log.error("The campaign with id: {} does not exists", campaignId);
+            throw new RegistryNotFoundException("The campaign with id" + campaignId + " does not exists");
         }
     }
 }

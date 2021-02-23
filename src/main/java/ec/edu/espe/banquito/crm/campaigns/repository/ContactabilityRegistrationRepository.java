@@ -5,6 +5,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.repository;
 
+import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +16,21 @@ import org.springframework.stereotype.Repository;
  *
  * @author cofre
  */
-
 @Repository
 public interface ContactabilityRegistrationRepository extends JpaRepository<ContactabilityRegistration, Integer> {
+
     List<ContactabilityRegistration> findAll();
+
     Optional<ContactabilityRegistration> findById(Integer id);
-    
+
     List<ContactabilityRegistration> findByStatusIs(String status);
+
     List<ContactabilityRegistration> findByStatusIn(List<String> statuses);
-    
+  
     List<ContactabilityRegistration> findByClientEmail(String clientEmail);
+  
+    List<ContactabilityRegistration> findByClientIdentificationOrderByClientSurnameDesc(String clientIdentification);
+
+    ContactabilityRegistration findByClientIdentificationAndCampaign(String clientIdentification, Campaign campaign);
+
 }
