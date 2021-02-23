@@ -30,5 +30,6 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findByStartDateBetween(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd") @Param("to") Date to);
 
     List<Campaign> findByEndDateBetween(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd") @Param("to") Date to);
-
+    
+    List<Campaign> findByRegion(String region);
 }

@@ -12,6 +12,7 @@ import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
+import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
@@ -196,6 +197,17 @@ public class CampaignController {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byRegion")
+    public ResponseEntity getCampaignsByRegion(@RequestParam String region) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByRegion(region));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
