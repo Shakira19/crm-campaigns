@@ -37,4 +37,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     
     List<Campaign> findByNumberClientsInProgressLessThan(Integer numberClientsInProgress);
     List<Campaign> findByNumberClientsInProgressLessThanEqual(Integer numberClientsInProgress);
+    
+    List<Campaign> findByNumberClientsInProgressGreaterThan(Integer numberClientsInProgress);
+    List<Campaign> findByNumberClientsInProgressGreaterThanEqual(Integer numberClientsInProgress);
 }

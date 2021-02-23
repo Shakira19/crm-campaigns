@@ -244,4 +244,26 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/byNumberClientsInProgressGreaterThan")
+    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThan(@RequestParam Integer numberClientsInProgress) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThan(numberClientsInProgress));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberClientsInProgressGreaterThanEqual")
+    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThanEqual(@RequestParam Integer numberClientsInProgress) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThanEqual(numberClientsInProgress));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
