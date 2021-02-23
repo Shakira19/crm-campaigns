@@ -174,5 +174,14 @@ public class CampaignService {
             throw new NotFoundException("No se encontro ninguna campaña con region: "+region);
         }
     }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressEquals(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressEquals(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
 
 }
