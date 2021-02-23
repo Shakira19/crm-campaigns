@@ -6,6 +6,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
@@ -38,6 +39,15 @@ public class ContactabilityRegistrationService {
 
     public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses) {
         return this.contactabilityRegistrationRepo.findByStatusIn(statuses);
+    }
+    
+    public List<ContactabilityRegistration> getContactabilityRegistrationByEmail(String email) throws NotFoundException {
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientEmail(email);
+        if(!contactabilities.isEmpty()) {
+            return contactabilities;
+        } else {
+            throw new NotFoundException("No se encontraron registros que contengan el email: "+email);
+        }
     }
 
     public List<ContactabilityRegistration> getContactabilityRegistryByClientIdentification(String clientIdentification) {

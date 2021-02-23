@@ -26,8 +26,11 @@ public interface ContactabilityRegistrationRepository extends JpaRepository<Cont
     List<ContactabilityRegistration> findByStatusIs(String status);
 
     List<ContactabilityRegistration> findByStatusIn(List<String> statuses);
-
+  
+    List<ContactabilityRegistration> findByClientEmail(String clientEmail);
+  
     List<ContactabilityRegistration> findByClientIdentificationOrderByClientSurnameDesc(String clientIdentification);
 
     ContactabilityRegistration findByClientIdentificationAndCampaign(String clientIdentification, Campaign campaign);
+
 }
