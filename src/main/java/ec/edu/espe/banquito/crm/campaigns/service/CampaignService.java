@@ -183,5 +183,23 @@ public class CampaignService {
             throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberClientsInProgress+" clientes en progreso");
         }
     }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressLessThan(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressLessThan(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos de "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressLessThanEqual(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressLessThanEqual(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña menos o exactamente "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
 
 }

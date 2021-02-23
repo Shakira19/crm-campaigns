@@ -213,9 +213,31 @@ public class CampaignController {
     }
     
     @GetMapping("/byNumberClientsInProgressEquals")
-    public ResponseEntity getCampaignsByNumberClientsInProgressEquals(Integer numberClientsInProgress) {
+    public ResponseEntity getCampaignsByNumberClientsInProgressEquals(@RequestParam Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressEquals(numberClientsInProgress));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberClientsInProgressLessThan")
+    public ResponseEntity getCampaignsByNumberClientsInProgressLessThan(@RequestParam Integer numberClientsInProgress) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThan(numberClientsInProgress));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberClientsInProgressLessThanEqual")
+    public ResponseEntity getCampaignsByNumberClientsInProgressLessThanEqual(@RequestParam Integer numberClientsInProgress) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThanEqual(numberClientsInProgress));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

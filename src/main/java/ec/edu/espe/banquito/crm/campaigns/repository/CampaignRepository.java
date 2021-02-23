@@ -34,4 +34,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findByRegion(String region);
     
     List<Campaign> findByNumberClientsInProgressEquals(Integer numberClientsInProgress);
+    
+    List<Campaign> findByNumberClientsInProgressLessThan(Integer numberClientsInProgress);
+    List<Campaign> findByNumberClientsInProgressLessThanEqual(Integer numberClientsInProgress);
 }
