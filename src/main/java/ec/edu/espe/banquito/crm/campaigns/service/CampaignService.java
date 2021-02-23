@@ -16,6 +16,7 @@ import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
+import java.util.Date;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,33 +28,88 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class CampaignService {
-    
+
     private final CampaignRepository campaignRepo;
     private final ContactabilityRegistrationRepository contactabilityRegistrationRepo;
-    
+
     public CampaignService(CampaignRepository campaignRepo, ContactabilityRegistrationRepository contactabilityRegistrationRepo) {
         this.campaignRepo = campaignRepo;
         this.contactabilityRegistrationRepo = contactabilityRegistrationRepo;
     }
-    
+
     public List<Campaign> listarCampaigns() {
         return this.campaignRepo.findAll();
     }
-    
+
     public Campaign getCampaignById(Integer id) throws RegistryNotFoundException {
         Optional<Campaign> campaign = this.campaignRepo.findById(id);
         if (campaign.isPresent()) {
             return campaign.get();
         } else {
-            log.error("The campaign with id: {} does not exists", id);
+            log.info("The campaign with id: {} does not exists", id);
             throw new RegistryNotFoundException("The campaign with id" + id + " does not exists");
         }
     }
-    
+
     public List<Campaign> getCampaignByName(String name) {
         return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
     }
-    
+
+    public List<Campaign> getCampaignByStartDate(Date date) throws RegistryNotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByStartDate(date);
+        if (campaigns.isEmpty()) {
+            log.info("No campaigns found with start date {}", date);
+            throw new RegistryNotFoundException("Not campaigns found with start date " + date);
+        } else {
+            log.info("The campaigns with start date {} were retrieved", date);
+            return campaigns;
+        }
+    }
+
+    public List<Campaign> getCampaignByEndDate(Date date) throws RegistryNotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByEndDate(date);
+        if (campaigns.isEmpty()) {
+            log.info("No campaigns found with end date {}", date);
+            throw new RegistryNotFoundException("Not campaigns found with end date " + date);
+        } else {
+            log.info("The campaigns with end date {} were retrieved", date);
+            return campaigns;
+        }
+    }
+
+    public List<Campaign> getCampaignByStartDateBetween(Date from, Date to) throws RegistryNotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByStartDateBetween(from, to);
+        if (campaigns.isEmpty()) {
+            log.info("No campaigns found with start date between {} and {}", from, to);
+            throw new RegistryNotFoundException("No campaigns found with start date between " + from + " and " + to);
+        } else {
+            log.info("The campaigns with start date between {} and {} were retrieved", from, to);
+            return campaigns;
+        }
+    }
+
+    public List<Campaign> getCampaignByEndDateBetween(Date from, Date to) throws RegistryNotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByStartDateBetween(from, to);
+        if (campaigns.isEmpty()) {
+            log.info("No campaigns found with end date between {} and {}", from, to);
+            throw new RegistryNotFoundException("No campaigns found with start date between " + from + " and " + to);
+        } else {
+            log.info("The campaigns with end date between {} and {} were retrieved", from, to);
+            return campaigns;
+        }
+    }
+
+    public List<Campaign> getCampaignByStartDateAndEndDate(Date from, Date to) throws RegistryNotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByStartDateAndEndDate(from, to);
+        if (campaigns.isEmpty()) {
+            log.info("No campaigns found with start date {} and end date {}", from, to);
+            throw new RegistryNotFoundException("No campaigns found with start date " + from + " and end date " + to);
+        } else {
+            log.info("The campaigns with start date {} and end date {} were retrieved", from, to);
+            return campaigns;
+        }
+    }
+
     public void createCampaign(Campaign campaign) throws InsertException {
         try {
             campaign.setStatus(CampaignStatusEnum.ACTIVE.getStatus());
@@ -69,7 +125,7 @@ public class CampaignService {
             throw new InsertException("campaign", "The campaign {} could not be created");
         }
     }
-    
+
     public void editCampaign(Campaign campaign, Integer id) throws RegistryNotFoundException, UpdateException {
         try {
             Campaign editedCampaign = this.getCampaignById(id);
@@ -82,15 +138,15 @@ public class CampaignService {
             this.campaignRepo.save(editedCampaign);
             log.info("The campaign with id: {}, was edited", id);
         } catch (RegistryNotFoundException e) {
-            log.error("The campaign with id: {}, was not found to be edited", id);
+            log.info("The campaign with id: {}, was not found to be edited", id);
             throw new RegistryNotFoundException("The campaign with id:" + id + ", was not found to be edited");
         } catch (Exception e) {
             log.error("An error occured when trying to update campaign with id: {}", id);
             throw new UpdateException("campaigns", "An error occured when trying to update campaign with id: " + id, e);
         }
-        
+
     }
-    
+
     public void updateCampaignStatus(Integer id, String newStatus) throws RegistryNotFoundException, UpdateException {
         try {
             Campaign editedCampaign = this.getCampaignById(id);
@@ -99,16 +155,16 @@ public class CampaignService {
             this.campaignRepo.save(editedCampaign);
             log.info("The status campaign with id: {}, was updated from {} to {}", id, oldStatus, newStatus);
         } catch (RegistryNotFoundException e) {
-            log.error("The campaign with id: {}, was not found to update its status", id);
+            log.info("The campaign with id: {}, was not found to update its status", id);
             throw new RegistryNotFoundException("The campaign with id:" + id + ", was not found to update its status");
         } catch (Exception e) {
             log.error("An error occured when trying to update the status of campaign with id: {}", id);
             throw new UpdateException("campaigns", "An error occured when trying to update the status of campaign with id: " + id, e);
         }
     }
-    
+
     public void assignClient(Integer id, ClientCampaignRQ client) throws RegistryNotFoundException, InsertException {
-        
+
         try {
             Campaign campaignToRegister = this.getCampaignById(id);
             ContactabilityRegistration contactabilityRegistration = ContactabilityRegistration.builder()
@@ -128,9 +184,9 @@ public class CampaignService {
             log.error("There was an error creating contactability registry of client {} in campaign with id {}", client, id);
             throw new InsertException("contactablityRegistration", "There was an error creating contactability registry of client " + client + " in campaign with id " + id, e);
         }
-        
+
     }
-    
+
     public void actualizarContacto(Integer contactabilityId, ContactStatusEnum status) throws RegistryNotFoundException {
         Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
         if (contactabilityToUpdate.isPresent()) {
@@ -141,5 +197,5 @@ public class CampaignService {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
         }
     }
-    
+
 }
