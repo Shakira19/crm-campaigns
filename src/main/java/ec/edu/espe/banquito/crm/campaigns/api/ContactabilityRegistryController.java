@@ -8,14 +8,17 @@ package ec.edu.espe.banquito.crm.campaigns.api;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ContactabilityStatusRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
+import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.service.ContactabilityRegistrationService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -73,6 +76,19 @@ public class ContactabilityRegistryController {
         }
         log.info("The contactability registries with one of this statuses: {}, will be retrived", statuses);
         return ResponseEntity.ok(this.service.getContactabilityRegistryByStatusIn(statuses));
+    }
+    
+    @GetMapping("/byEmail")
+    public ResponseEntity getContactabilityByEmail(@RequestParam String email) {
+        try {
+            return ResponseEntity.ok(this.service.getContactabilityRegistrationByEmail(email));
+        } catch (NotFoundException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error interno al buscar los registros por email: "+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }
