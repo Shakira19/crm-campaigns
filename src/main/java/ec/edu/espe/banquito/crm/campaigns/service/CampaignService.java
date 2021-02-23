@@ -55,28 +55,6 @@ public class CampaignService {
         return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
     }
 
-    public List<Campaign> getCampaignByStartDate(Date date) throws RegistryNotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByStartDate(date);
-        if (campaigns.isEmpty()) {
-            log.info("No campaigns found with start date {}", date);
-            throw new RegistryNotFoundException("Not campaigns found with start date " + date);
-        } else {
-            log.info("The campaigns with start date {} were retrieved", date);
-            return campaigns;
-        }
-    }
-
-    public List<Campaign> getCampaignByEndDate(Date date) throws RegistryNotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByEndDate(date);
-        if (campaigns.isEmpty()) {
-            log.info("No campaigns found with end date {}", date);
-            throw new RegistryNotFoundException("Not campaigns found with end date " + date);
-        } else {
-            log.info("The campaigns with end date {} were retrieved", date);
-            return campaigns;
-        }
-    }
-
     public List<Campaign> getCampaignByStartDateBetween(Date from, Date to) throws RegistryNotFoundException {
         List<Campaign> campaigns = this.campaignRepo.findByStartDateBetween(from, to);
         if (campaigns.isEmpty()) {
@@ -89,23 +67,12 @@ public class CampaignService {
     }
 
     public List<Campaign> getCampaignByEndDateBetween(Date from, Date to) throws RegistryNotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByStartDateBetween(from, to);
+        List<Campaign> campaigns = this.campaignRepo.findByEndDateBetween(from, to);
         if (campaigns.isEmpty()) {
             log.info("No campaigns found with end date between {} and {}", from, to);
             throw new RegistryNotFoundException("No campaigns found with start date between " + from + " and " + to);
         } else {
             log.info("The campaigns with end date between {} and {} were retrieved", from, to);
-            return campaigns;
-        }
-    }
-
-    public List<Campaign> getCampaignByStartDateAndEndDate(Date from, Date to) throws RegistryNotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByStartDateAndEndDate(from, to);
-        if (campaigns.isEmpty()) {
-            log.info("No campaigns found with start date {} and end date {}", from, to);
-            throw new RegistryNotFoundException("No campaigns found with start date " + from + " and end date " + to);
-        } else {
-            log.info("The campaigns with start date {} and end date {} were retrieved", from, to);
             return campaigns;
         }
     }

@@ -81,38 +81,6 @@ public class CampaignController {
     }
 
     @GetMapping("/by-start-date")
-    public ResponseEntity getCampaignByStartDate(@RequestBody CampaignDateRQ dateRq) {
-        ResponseEntity response;
-        if (dateRq.getStartDate() != null) {
-            try {
-                log.info("The campaigns with start date {} will be retrieved", dateRq.getStartDate());
-                response = ResponseEntity.ok(this.service.getCampaignByStartDate(dateRq.getStartDate()));
-            } catch (RegistryNotFoundException e) {
-                response = ResponseEntity.notFound().build();
-            }
-        } else {
-            response = ResponseEntity.badRequest().build();
-        }
-        return response;
-    }
-
-    @GetMapping("/by-end-date")
-    public ResponseEntity getCampaignByEndDate(@RequestBody CampaignDateRQ dateRq) {
-        ResponseEntity response;
-        if (dateRq.getEndDate() != null) {
-            try {
-                log.info("The campaigns with start date {} will be retrieved", dateRq.getEndDate());
-                response = ResponseEntity.ok(this.service.getCampaignByEndDate(dateRq.getEndDate()));
-            } catch (RegistryNotFoundException e) {
-                response = ResponseEntity.notFound().build();
-            }
-        } else {
-            response = ResponseEntity.badRequest().build();
-        }
-        return response;
-    }
-
-    @GetMapping("/by-start-date-between")
     public ResponseEntity getCampaignByStartDateBetween(@RequestBody CampaignDateRQ dateRq) {
         ResponseEntity response;
         if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
@@ -128,29 +96,13 @@ public class CampaignController {
         return response;
     }
 
-    @GetMapping("/by-end-date-between")
+    @GetMapping("/by-end-date")
     public ResponseEntity getCampaignByEndDateBetween(@RequestBody CampaignDateRQ dateRq) {
         ResponseEntity response;
         if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
             try {
                 log.info("The campaigns with end date between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
                 response = ResponseEntity.ok(this.service.getCampaignByEndDateBetween(dateRq.getStartDate(), dateRq.getEndDate()));
-            } catch (RegistryNotFoundException e) {
-                response = ResponseEntity.notFound().build();
-            }
-        } else {
-            response = ResponseEntity.badRequest().build();
-        }
-        return response;
-    }
-
-    @GetMapping("/by-start-end-date")
-    public ResponseEntity getCampaignByStartEndDate(@RequestBody CampaignDateRQ dateRq) {
-        ResponseEntity response;
-        if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
-            try {
-                log.info("The campaigns between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
-                response = ResponseEntity.ok(this.service.getCampaignByStartDateAndEndDate(dateRq.getStartDate(), dateRq.getEndDate()));
             } catch (RegistryNotFoundException e) {
                 response = ResponseEntity.notFound().build();
             }
