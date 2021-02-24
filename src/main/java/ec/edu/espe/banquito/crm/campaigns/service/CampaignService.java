@@ -83,7 +83,7 @@ public class CampaignService {
             campaign.setStatus(CampaignStatusEnum.ACTIVE.getStatus());
             campaign.setTotalNumberClients(0);
             campaign.setNumberAssignedClients(0);
-            campaign.setNumberAccepetdClients(0);
+            campaign.setNumberAcceptedClients(0);
             campaign.setNumberClientsInProgress(0);
             campaign.setNumberRejectedClients(0);
             this.campaignRepo.save(campaign);
@@ -172,6 +172,186 @@ public class CampaignService {
             return campaigns;
         } else {
             throw new NotFoundException("No se encontro ninguna campaña con region: "+region);
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressEquals(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressEquals(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressLessThan(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressLessThan(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos de "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressLessThanEqual(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressLessThanEqual(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos o exactamente "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressGreaterThan(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressGreaterThan(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas de "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberClientsInProgressGreaterThanEqual(Integer numberClientsInProgress) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberClientsInProgressGreaterThanEqual(numberClientsInProgress);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas o exactamente "+numberClientsInProgress+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAcceptedClientsEquals(Integer numberAcceptedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAcceptedClientsEquals(numberAcceptedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberAcceptedClients+" clientes que aceptaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAcceptedClientsLessThan(Integer numberAcceptedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAcceptedClientsLessThan(numberAcceptedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos de "+numberAcceptedClients+" clientes que aceptaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAcceptedClientsLessThanEqual(Integer numberAcceptedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAcceptedClientsLessThanEqual(numberAcceptedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos o exactamente "+numberAcceptedClients+" clientes que aceptaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAcceptedClientsGreaterThan(Integer numberAcceptedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAcceptedClientsGreaterThan(numberAcceptedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas de "+numberAcceptedClients+" clientes que aceptaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAcceptedClientsGreaterThanEqual(Integer numberAcceptedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAcceptedClientsGreaterThanEqual(numberAcceptedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas o exactamente "+numberAcceptedClients+" clientes en progreso");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAssignedClientsEquals(Integer numberAssignedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAssignedClientsEquals(numberAssignedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberAssignedClients+" clientes que se asignaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAssignedClientsLessThan(Integer numberAssignedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAssignedClientsLessThan(numberAssignedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos de "+numberAssignedClients+" clientes que se asignaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAssignedClientsLessThanEqual(Integer numberAssignedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAssignedClientsLessThanEqual(numberAssignedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos o exactamente "+numberAssignedClients+" clientes que se asignaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAssignedClientsGreaterThan(Integer numberAssignedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAssignedClientsGreaterThan(numberAssignedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas de "+numberAssignedClients+" clientes que se asignaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberAssignedClientsGreaterThanEqual(Integer numberAssignedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberAssignedClientsGreaterThanEqual(numberAssignedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas o exactamente "+numberAssignedClients+" clientes se asignaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberRejectedClientsEquals(Integer numberRejectedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberRejectedClientsEquals(numberRejectedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con exactamente "+numberRejectedClients+" clientes que se rechazaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberRejectedClientsLessThan(Integer numberRejectedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberRejectedClientsLessThan(numberRejectedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos de "+numberRejectedClients+" clientes que se rechazaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberRejectedClientsLessThanEqual(Integer numberRejectedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberRejectedClientsLessThanEqual(numberRejectedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con menos o exactamente "+numberRejectedClients+" clientes que se rechazaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberRejectedClientsGreaterThan(Integer numberRejectedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberRejectedClientsGreaterThan(numberRejectedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas de "+numberRejectedClients+" clientes que se rechazaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByNumberRejectedClientsGreaterThanEqual(Integer numberRejectedClients) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByNumberRejectedClientsGreaterThanEqual(numberRejectedClients);
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            throw new NotFoundException("No se encontro ninguna campaña con mas o exactamente "+numberRejectedClients+" clientes se rechazaron");
         }
     }
 

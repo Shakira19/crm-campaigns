@@ -32,4 +32,36 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findByEndDateBetween(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd") @Param("to") Date to);
     
     List<Campaign> findByRegion(String region);
+    
+    List<Campaign> findByNumberClientsInProgressEquals(Integer numberClientsInProgress);
+    
+    List<Campaign> findByNumberClientsInProgressLessThan(Integer numberClientsInProgress);
+    List<Campaign> findByNumberClientsInProgressLessThanEqual(Integer numberClientsInProgress);
+    
+    List<Campaign> findByNumberClientsInProgressGreaterThan(Integer numberClientsInProgress);
+    List<Campaign> findByNumberClientsInProgressGreaterThanEqual(Integer numberClientsInProgress);
+    
+    List<Campaign> findByNumberAcceptedClientsEquals(Integer numberAcceptedClients);
+    
+    List<Campaign> findByNumberAcceptedClientsLessThan(Integer numberAcceptedClients);
+    List<Campaign> findByNumberAcceptedClientsLessThanEqual(Integer numberAcceptedClients);
+    
+    List<Campaign> findByNumberAcceptedClientsGreaterThan(Integer numberAcceptedClients);
+    List<Campaign> findByNumberAcceptedClientsGreaterThanEqual(Integer numberAcceptedClients);
+    
+    List<Campaign> findByNumberAssignedClientsEquals(Integer numberAssignedClients);
+    
+    List<Campaign> findByNumberAssignedClientsLessThan(Integer numberAssignedClients);
+    List<Campaign> findByNumberAssignedClientsLessThanEqual(Integer numberAssignedClients);
+    
+    List<Campaign> findByNumberAssignedClientsGreaterThan(Integer numberAssignedClients);
+    List<Campaign> findByNumberAssignedClientsGreaterThanEqual(Integer numberAssignedClients);
+    
+    List<Campaign> findByNumberRejectedClientsEquals(Integer numberRejectedClients);
+    
+    List<Campaign> findByNumberRejectedClientsLessThan(Integer numberRejectedClients);
+    List<Campaign> findByNumberRejectedClientsLessThanEqual(Integer numberRejectedClients);
+    
+    List<Campaign> findByNumberRejectedClientsGreaterThan(Integer numberRejectedClients);
+    List<Campaign> findByNumberRejectedClientsGreaterThanEqual(Integer numberRejectedClients);
 }
