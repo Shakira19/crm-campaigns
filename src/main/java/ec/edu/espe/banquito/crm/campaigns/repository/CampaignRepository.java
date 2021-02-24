@@ -48,4 +48,12 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     
     List<Campaign> findByNumberAcceptedClientsGreaterThan(Integer numberAcceptedClients);
     List<Campaign> findByNumberAcceptedClientsGreaterThanEqual(Integer numberAcceptedClients);
+    
+    List<Campaign> findByNumberAssignedClientsEquals(Integer numberAssignedClients);
+    
+    List<Campaign> findByNumberAssignedClientsLessThan(Integer numberAssignedClients);
+    List<Campaign> findByNumberAssignedClientsLessThanEqual(Integer numberAssignedClients);
+    
+    List<Campaign> findByNumberAssignedClientsGreaterThan(Integer numberAssignedClients);
+    List<Campaign> findByNumberAssignedClientsGreaterThanEqual(Integer numberAssignedClients);
 }

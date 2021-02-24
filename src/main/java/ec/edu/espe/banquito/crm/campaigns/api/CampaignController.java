@@ -321,4 +321,59 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/byNumberAssignedClientsEquals")
+    public ResponseEntity getCampaignsByNumberAssignedClientsEquals(@RequestParam Integer numberAssignedClients) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsEquals(numberAssignedClients));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberAssignedClientsLessThan")
+    public ResponseEntity getCampaignsByNumberAssignedClientsLessThan(@RequestParam Integer numberAssignedClients) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThan(numberAssignedClients));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberAssignedClientsLessThanEqual")
+    public ResponseEntity getCampaignsByNumberAssignedClientsLessThanEqual(@RequestParam Integer numberAssignedClients) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThanEqual(numberAssignedClients));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberAssignedClientsGreaterThan")
+    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThan(@RequestParam Integer numberAssignedClients) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThan(numberAssignedClients));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping("/byNumberAssignedClientsGreaterThanEqual")
+    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThanEqual(@RequestParam Integer numberAssignedClients) {
+        try {
+            return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThanEqual(numberAssignedClients));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
