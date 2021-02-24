@@ -58,7 +58,7 @@ public class Campaign {
     private Integer numberClientsInProgress;
 
     @Column(name = "accepted_clients_number")
-    private Integer numberAccepetdClients;
+    private Integer numberAcceptedClients;
 
     @Column(name = "rejected_clients_number")
     private Integer numberRejectedClients;
