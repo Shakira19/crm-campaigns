@@ -64,7 +64,7 @@ public class ContactabilityRegistrationService {
         }
     }
     
-    public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) {
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) throws NotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientPhone(clientPhone);
         if(!contactabilities.isEmpty()) {
             return contactabilities;
@@ -74,7 +74,7 @@ public class ContactabilityRegistrationService {
         }
     }
     
-    public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname){
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws NotFoundException{
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameAndClientSurname(clientName, clientSurname);
         if(!contactabilities.isEmpty()){
             return contactabilities;
