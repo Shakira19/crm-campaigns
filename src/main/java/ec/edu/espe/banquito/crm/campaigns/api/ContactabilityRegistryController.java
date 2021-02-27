@@ -105,7 +105,17 @@ public class ContactabilityRegistryController {
             log.info("The contactability registry of client with identification {} in campaign with id: {} will be retrieved", identification, campaignId);
             return ResponseEntity.ok(this.service.getContactabilityRegistryByClientIdentificationAndCampaign(identification, campaignId));
         } catch (RegistryNotFoundException ex) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @GetMapping("/byClientPhone/{clientPhone}")
+    public ResponseEntity getContactabilityRegistrationByClientPhone(@PathVariable String clientPhone) {
+        try {
+            log.info("The contactastabilities with {} as phone number were retrieved", clientPhone);
+            return ResponseEntity.ok(this.service.getContactabilityRegistrationByClientPhone(clientPhone));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
