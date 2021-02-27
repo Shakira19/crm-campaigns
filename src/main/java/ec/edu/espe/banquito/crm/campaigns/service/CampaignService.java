@@ -6,6 +6,7 @@
 package ec.edu.espe.banquito.crm.campaigns.service;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
+import ec.edu.espe.banquito.crm.campaigns.enums.CampaignKindProductEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
@@ -352,6 +353,16 @@ public class CampaignService {
             return campaigns;
         } else {
             throw new NotFoundException("No se encontro ninguna campaña con mas o exactamente "+numberRejectedClients+" clientes se rechazaron");
+        }
+    }
+    
+    public List<Campaign> getCampaignsByKindProduct(String kindProduct) throws NotFoundException{
+        List<Campaign> campaigns = this.campaignRepo.findByKindProduct(CampaignKindProductEnum.valueOf(kindProduct).getType());
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            log.info("Couldn't find any campaigns with {} as type of product", kindProduct);
+            throw new NotFoundException("Couldn't find any campaigns with "+kindProduct+" as type of product");
         }
     }
 

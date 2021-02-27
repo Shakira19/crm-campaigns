@@ -431,4 +431,14 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    @GetMapping("/byKindProduct")
+    public ResponseEntity getCampaignsByKindProduct(@RequestParam String kindProduct) {
+        try {
+            log.info("Retrieved the campaigns with {} as type of product", kindProduct);
+            return ResponseEntity.ok(this.service.getCampaignsByKindProduct(kindProduct));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
