@@ -66,4 +66,6 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
     List<Campaign> findByNumberRejectedClientsGreaterThanEqual(Integer numberRejectedClients);
     
     List<Campaign> findByKindProduct(String kindProduct);
+    
+    List<Campaign> findByStatus(String status);
 }

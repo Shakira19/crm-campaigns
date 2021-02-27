@@ -441,4 +441,14 @@ public class CampaignController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @GetMapping("/byStatus")
+    public ResponseEntity getCampaignsByStatus(@RequestParam String status) {
+        try {
+            log.info("Retrieved the campaigns with {} as status", status);
+            return ResponseEntity.ok(this.service.getCampaignsByStatus(status));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

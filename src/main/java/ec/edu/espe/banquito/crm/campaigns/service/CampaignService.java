@@ -365,5 +365,15 @@ public class CampaignService {
             throw new NotFoundException("Couldn't find any campaigns with "+kindProduct+" as type of product");
         }
     }
+    
+    public List<Campaign> getCampaignsByStatus(String status) throws NotFoundException {
+        List<Campaign> campaigns = this.campaignRepo.findByStatus(CampaignStatusEnum.valueOf(status).getStatus());
+        if(!campaigns.isEmpty()) {
+            return campaigns;
+        } else {
+            log.info("Couldn't find any campaigns with {} as status", status);
+            throw new NotFoundException("Couldn't find any campaigns with "+status+" as status");
+        }
+    }
 
 }
