@@ -63,4 +63,14 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("The campaign with id" + campaignId + " does not exists");
         }
     }
+    
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) {
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientPhone(clientPhone);
+        if(!contactabilities.isEmpty()) {
+            return contactabilities;
+        } else {
+            log.info("There are no contactabilities with {} as client phone number");
+            throw new NotFoundException("No existe ningún contacto registrado con el telefono: "+clientPhone);
+        }
+    }
 }
