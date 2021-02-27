@@ -73,4 +73,14 @@ public class ContactabilityRegistrationService {
             throw new NotFoundException("No existe ningún contacto registrado con el telefono: "+clientPhone);
         }
     }
+    
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname){
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameAndClientSurname(clientName, clientSurname);
+        if(!contactabilities.isEmpty()){
+            return contactabilities;
+        } else {
+            log.info("Couldn't find any contactabilities for {} {}", clientName, clientSurname);
+            throw new NotFoundException("Couldn't find any contactabilities for "+clientName+" "+clientSurname);
+        }
+    }
 }

@@ -118,5 +118,15 @@ public class ContactabilityRegistryController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @GetMapping("/byClientNameAndSurname")
+    public ResponseEntity getContactabilityRegistrationByClientNameAndSurname(@RequestParam String clientName, @RequestParam String clientSurname){
+        try {
+            log.info("Contactabilities for {} {} were retrieved");
+            return ResponseEntity.ok(this.service.getContactabilityRegistrationByClientNameAndSurname(clientName, clientSurname));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
