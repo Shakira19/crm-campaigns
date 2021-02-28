@@ -33,25 +33,48 @@ public class ContactabilityRegistrationService {
         this.contactabilityRegistrationRepo = contactabilityRegistrationRepo;
     }
 
-    public List<ContactabilityRegistration> getContactabilityRegistryByStatus(String status) {
-        return this.contactabilityRegistrationRepo.findByStatusIs(status);
-    }
-
-    public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses) {
-        return this.contactabilityRegistrationRepo.findByStatusIn(statuses);
-    }
-    
-    public List<ContactabilityRegistration> getContactabilityRegistrationByEmail(String email) throws NotFoundException {
-        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientEmail(email);
-        if(!contactabilities.isEmpty()) {
-            return contactabilities;
+    public List<ContactabilityRegistration> getContactabilityRegistryByStatus(String status) throws RegistryNotFoundException {
+        List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByStatusIs(status);
+        if (result.isEmpty()) {
+            log.info("The campaigns with status {} were not found", status);
+            throw new RegistryNotFoundException("The campaigns with status " + status + " were not found");
         } else {
-            throw new NotFoundException("No se encontraron registros que contengan el email: "+email);
+            log.info("The campaigns with status {} were retrieved", status);
+            return result;
         }
     }
 
-    public List<ContactabilityRegistration> getContactabilityRegistryByClientIdentification(String clientIdentification) {
-        return this.contactabilityRegistrationRepo.findByClientIdentificationOrderByClientSurnameDesc(clientIdentification);
+    public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses) throws RegistryNotFoundException {
+        List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByStatusIn(statuses);
+        if (result.isEmpty()) {
+            log.info("The campaigns with statuses {} were not found", statuses);
+            throw new RegistryNotFoundException("The campaigns with status " + statuses + " were not found");
+        } else {
+            log.info("The campaigns with statuses {} were retrieved", statuses);
+            return result;
+        }
+    }
+
+    public List<ContactabilityRegistration> getContactabilityRegistrationByEmail(String email) throws RegistryNotFoundException {
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientEmail(email);
+        if (!contactabilities.isEmpty()) {
+            log.info("The registries that have email: {} were retrieved", email);
+            return contactabilities;
+        } else {
+            log.info("Not found registries that have email: {}", email);
+            throw new RegistryNotFoundException("Not found registries that have email: " + email);
+        }
+    }
+
+    public List<ContactabilityRegistration> getContactabilityRegistryByClientIdentification(String clientIdentification) throws RegistryNotFoundException {
+        List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByClientIdentificationOrderByClientSurnameDesc(clientIdentification);
+        if (result.isEmpty()) {
+            log.info("Not found registries that have identification: {}", clientIdentification);
+            throw new RegistryNotFoundException("Not found registries that have identification: " + clientIdentification);
+        } else {
+            log.info("The registries that have identifications: {} were retrieved", clientIdentification);
+            return result;
+        }
     }
 
     public ContactabilityRegistration getContactabilityRegistryByClientIdentificationAndCampaign(String identification, Integer campaignId) throws RegistryNotFoundException {
@@ -63,24 +86,24 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("The campaign with id" + campaignId + " does not exists");
         }
     }
-    
-    public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) throws NotFoundException {
+
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) throws RegistryNotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientPhone(clientPhone);
-        if(!contactabilities.isEmpty()) {
+        if (!contactabilities.isEmpty()) {
             return contactabilities;
         } else {
             log.info("There are no contactabilities with {} as client phone number");
-            throw new NotFoundException("No existe ningún contacto registrado con el telefono: "+clientPhone);
+            throw new RegistryNotFoundException("No existe ningún contacto registrado con el telefono: " + clientPhone);
         }
     }
-    
-    public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws NotFoundException{
+
+    public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws RegistryNotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameAndClientSurname(clientName, clientSurname);
-        if(!contactabilities.isEmpty()){
+        if (!contactabilities.isEmpty()) {
             return contactabilities;
         } else {
             log.info("Couldn't find any contactabilities for {} {}", clientName, clientSurname);
-            throw new NotFoundException("Couldn't find any contactabilities for "+clientName+" "+clientSurname);
+            throw new RegistryNotFoundException("Couldn't find any contactabilities for " + clientName + " " + clientSurname);
         }
     }
 }
