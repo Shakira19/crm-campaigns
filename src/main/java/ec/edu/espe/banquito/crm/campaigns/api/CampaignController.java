@@ -5,7 +5,6 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.api;
 
-import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignDateRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,19 +75,19 @@ public class CampaignController {
         }
     }
 
-    @GetMapping("/by-name/{name}")
+    @GetMapping("/byName/{name}")
     public ResponseEntity getCampaignByName(@PathVariable String name) {
         log.info("The campaign that match it's name with {}, will be retrieved", name);
         return ResponseEntity.ok(this.service.getCampaignByName(name));
     }
 
-    @GetMapping("/by-start-date")
-    public ResponseEntity getCampaignByStartDateBetween(@RequestBody CampaignDateRQ dateRq) {
+    @GetMapping("/byStartDate/{startDate}")
+    public ResponseEntity getCampaignByStartDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date startDate) {
         ResponseEntity response;
-        if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
+        if (startDate != null) {
             try {
-                log.info("The campaigns with start date between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
-                response = ResponseEntity.ok(this.service.getCampaignByStartDateBetween(dateRq.getStartDate(), dateRq.getEndDate()));
+                log.info("The campaigns with start date between {} will be retrieved", startDate);
+                response = ResponseEntity.ok(this.service.getCampaignByStartDate(startDate));
             } catch (RegistryNotFoundException e) {
                 response = ResponseEntity.notFound().build();
             }
@@ -97,13 +97,13 @@ public class CampaignController {
         return response;
     }
 
-    @GetMapping("/by-end-date")
-    public ResponseEntity getCampaignByEndDateBetween(@RequestBody CampaignDateRQ dateRq) {
+    @GetMapping("/byEndDate/{endDate}")
+    public ResponseEntity getCampaignByEndDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
         ResponseEntity response;
-        if (dateRq.getStartDate() != null && dateRq.getEndDate() != null) {
+        if (endDate != null) {
             try {
-                log.info("The campaigns with end date between {} and {} will be retrieved", dateRq.getStartDate(), dateRq.getEndDate());
-                response = ResponseEntity.ok(this.service.getCampaignByEndDateBetween(dateRq.getStartDate(), dateRq.getEndDate()));
+                log.info("The campaigns with end date between {} will be retrieved", endDate);
+                response = ResponseEntity.ok(this.service.getCampaignByEndDate(endDate));
             } catch (RegistryNotFoundException e) {
                 response = ResponseEntity.notFound().build();
             }
@@ -152,7 +152,7 @@ public class CampaignController {
         }
     }
 
-    @PutMapping("/update-status/{id}")
+    @PutMapping("/updateStatus/{id}")
     public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
         String status;
         if (statusRq.isActive()) {
@@ -176,7 +176,7 @@ public class CampaignController {
         }
     }
 
-    @PostMapping("/assign-client/{id}")
+    @PostMapping("/assignClient/{id}")
     public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam ClientCampaignRQ client) {
         try {
             this.service.assignClient(id, client);
@@ -200,9 +200,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byRegion")
-    public ResponseEntity getCampaignsByRegion(@RequestParam String region) {
+
+    @GetMapping("/byRegion/{region}")
+    public ResponseEntity getCampaignsByRegion(@PathVariable String region) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByRegion(region));
         } catch (NotFoundException e) {
@@ -211,9 +211,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberClientsInProgressEquals")
-    public ResponseEntity getCampaignsByNumberClientsInProgressEquals(@RequestParam Integer numberClientsInProgress) {
+
+    @GetMapping("/byNumberClientsInProgressEquals/{numberClientsInProgress}")
+    public ResponseEntity getCampaignsByNumberClientsInProgressEquals(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressEquals(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -222,9 +222,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberClientsInProgressLessThan")
-    public ResponseEntity getCampaignsByNumberClientsInProgressLessThan(@RequestParam Integer numberClientsInProgress) {
+
+    @GetMapping("/byNumberClientsInProgressLessThan/{numberClientsInProgress}")
+    public ResponseEntity getCampaignsByNumberClientsInProgressLessThan(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThan(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -233,9 +233,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberClientsInProgressLessThanEqual")
-    public ResponseEntity getCampaignsByNumberClientsInProgressLessThanEqual(@RequestParam Integer numberClientsInProgress) {
+
+    @GetMapping("/byNumberClientsInProgressLessThanEqual/{numberClientsInProgress}")
+    public ResponseEntity getCampaignsByNumberClientsInProgressLessThanEqual(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThanEqual(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -244,9 +244,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberClientsInProgressGreaterThan")
-    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThan(@RequestParam Integer numberClientsInProgress) {
+
+    @GetMapping("/byNumberClientsInProgressGreaterThan/{numberClientsInProgress}")
+    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThan(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThan(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -255,9 +255,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberClientsInProgressGreaterThanEqual")
-    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThanEqual(@RequestParam Integer numberClientsInProgress) {
+
+    @GetMapping("/byNumberClientsInProgressGreaterThanEqual/{numberClientsInProgress}")
+    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThanEqual(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThanEqual(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -266,9 +266,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAcceptedClientsEquals")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsEquals(@RequestParam Integer numberAcceptedClients) {
+
+    @GetMapping("/byNumberAcceptedClientsEquals/{numberAcceptedClients}")
+    public ResponseEntity getCampaignsByNumberAcceptedClientsEquals(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsEquals(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -277,9 +277,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAcceptedClientsLessThan")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThan(@RequestParam Integer numberAcceptedClients) {
+
+    @GetMapping("/byNumberAcceptedClientsLessThan/{numberAcceptedClients}")
+    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThan(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsLessThan(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -288,9 +288,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAcceptedClientsLessThanEqual")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThanEqual(@RequestParam Integer numberAcceptedClients) {
+
+    @GetMapping("/byNumberAcceptedClientsLessThanEqual/{numberAcceptedClients}")
+    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThanEqual(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsLessThanEqual(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -299,9 +299,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAcceptedClientsGreaterThan")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThan(@RequestParam Integer numberAcceptedClients) {
+
+    @GetMapping("/byNumberAcceptedClientsGreaterThan/{numberAcceptedClients}")
+    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThan(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsGreaterThan(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -310,9 +310,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAcceptedClientsGreaterThanEqual")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThanEqual(@RequestParam Integer numberAcceptedClients) {
+
+    @GetMapping("/byNumberAcceptedClientsGreaterThanEqual/{numberAcceptedClients}")
+    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThanEqual(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsGreaterThanEqual(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -321,9 +321,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAssignedClientsEquals")
-    public ResponseEntity getCampaignsByNumberAssignedClientsEquals(@RequestParam Integer numberAssignedClients) {
+
+    @GetMapping("/byNumberAssignedClientsEquals/{numberAssignedClients}")
+    public ResponseEntity getCampaignsByNumberAssignedClientsEquals(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsEquals(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -332,9 +332,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAssignedClientsLessThan")
-    public ResponseEntity getCampaignsByNumberAssignedClientsLessThan(@RequestParam Integer numberAssignedClients) {
+
+    @GetMapping("/byNumberAssignedClientsLessThan/{numberAssignedClients}")
+    public ResponseEntity getCampaignsByNumberAssignedClientsLessThan(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThan(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -343,9 +343,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAssignedClientsLessThanEqual")
-    public ResponseEntity getCampaignsByNumberAssignedClientsLessThanEqual(@RequestParam Integer numberAssignedClients) {
+
+    @GetMapping("/byNumberAssignedClientsLessThanEqual/{numberAssignedClients}")
+    public ResponseEntity getCampaignsByNumberAssignedClientsLessThanEqual(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThanEqual(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -354,9 +354,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAssignedClientsGreaterThan")
-    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThan(@RequestParam Integer numberAssignedClients) {
+
+    @GetMapping("/byNumberAssignedClientsGreaterThan/{numberAssignedClients}")
+    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThan(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThan(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -365,9 +365,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberAssignedClientsGreaterThanEqual")
-    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThanEqual(@RequestParam Integer numberAssignedClients) {
+
+    @GetMapping("/byNumberAssignedClientsGreaterThanEqual/{numberAssignedClients}")
+    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThanEqual(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThanEqual(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -376,9 +376,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberRejectedClientsEquals")
-    public ResponseEntity getCampaignsByNumberRejectedClientsEquals(@RequestParam Integer numberRejectedClients) {
+
+    @GetMapping("/byNumberRejectedClientsEquals/{numberRejectedClients}")
+    public ResponseEntity getCampaignsByNumberRejectedClientsEquals(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsEquals(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -387,9 +387,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberRejectedClientsLessThan")
-    public ResponseEntity getCampaignsByNumberRejectedClientsLessThan(@RequestParam Integer numberRejectedClients) {
+
+    @GetMapping("/byNumberRejectedClientsLessThan/{numberRejectedClients}")
+    public ResponseEntity getCampaignsByNumberRejectedClientsLessThan(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsLessThan(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -398,9 +398,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberRejectedClientsLessThanEqual")
-    public ResponseEntity getCampaignsByNumberRejectedClientsLessThanEqual(@RequestParam Integer numberRejectedClients) {
+
+    @GetMapping("/byNumberRejectedClientsLessThanEqual/{numberRejectedClients}")
+    public ResponseEntity getCampaignsByNumberRejectedClientsLessThanEqual(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsLessThanEqual(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -409,9 +409,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberRejectedClientsGreaterThan")
-    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThan(@RequestParam Integer numberRejectedClients) {
+
+    @GetMapping("/byNumberRejectedClientsGreaterThan/{numberRejectedClients}")
+    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThan(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsGreaterThan(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -420,9 +420,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byNumberRejectedClientsGreaterThanEqual")
-    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThanEqual(@RequestParam Integer numberRejectedClients) {
+
+    @GetMapping("/byNumberRejectedClientsGreaterThanEqual/{numberRejectedClients}")
+    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThanEqual(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsGreaterThanEqual(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -431,9 +431,9 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    @GetMapping("/byKindProduct")
-    public ResponseEntity getCampaignsByKindProduct(@RequestParam String kindProduct) {
+
+    @GetMapping("/byKindProduct/{kindProduct}")
+    public ResponseEntity getCampaignsByKindProduct(@PathVariable String kindProduct) {
         try {
             log.info("Retrieved the campaigns with {} as type of product", kindProduct);
             return ResponseEntity.ok(this.service.getCampaignsByKindProduct(kindProduct));
@@ -441,9 +441,9 @@ public class CampaignController {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    @GetMapping("/byStatus")
-    public ResponseEntity getCampaignsByStatus(@RequestParam String status) {
+
+    @GetMapping("/byStatus/{status}")
+    public ResponseEntity getCampaignsByStatus(@PathVariable String status) {
         try {
             log.info("Retrieved the campaigns with {} as status", status);
             return ResponseEntity.ok(this.service.getCampaignsByStatus(status));

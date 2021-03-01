@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -62,12 +61,12 @@ public class ContactabilityRegistryController {
         }
     }
 
-    @GetMapping("/byEmail")
+    @GetMapping("/byEmail/{email}")
     @ApiOperation(value = "Find contactability registries by email")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Registries Found"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityByEmail(@RequestParam String email) {
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityByEmail(@PathVariable String email) {
         try {
             return ResponseEntity.ok(this.service.getContactabilityRegistrationByEmail(email));
         } catch (RegistryNotFoundException e) {
