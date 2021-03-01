@@ -16,9 +16,14 @@ import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.service.CampaignService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -48,24 +53,35 @@ public class CampaignController {
     }
 
     @GetMapping
-    public ResponseEntity listarCampaigns() {
+    @ApiOperation(value = "List Campaigns")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> listarCampaigns() {
+        ResponseEntity response;
         try {
             List<Campaign> items = new ArrayList<Campaign>();
-
             this.service.listarCampaigns().forEach(items::add);
 
             if (items.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<>(items, HttpStatus.OK);
+            response = new ResponseEntity<>(items, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return response;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getCampaignById(@PathVariable Integer id) {
+    @ApiOperation(value = "Find campaign by id")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<Campaign> getCampaignById(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(this.service.getCampaignById(id));
         } catch (RegistryNotFoundException e) {
@@ -76,13 +92,26 @@ public class CampaignController {
     }
 
     @GetMapping("/byName/{name}")
-    public ResponseEntity getCampaignByName(@PathVariable String name) {
-        log.info("The campaign that match it's name with {}, will be retrieved", name);
-        return ResponseEntity.ok(this.service.getCampaignByName(name));
+    @ApiOperation(value = "Find campaign by name")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<Campaign>> getCampaignByName(@PathVariable String name) {
+        try {
+            log.info("The campaign that match it's name with {}, will be retrieved", name);
+            return ResponseEntity.ok(this.service.getCampaignByName(name));
+        } catch (RegistryNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/byStartDate/{startDate}")
-    public ResponseEntity getCampaignByStartDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date startDate) {
+    @ApiOperation(value = "Find campaign by stat date")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 400, message = "The date passed is not in the correct format: yyyyMMdd"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<Campaign>> getCampaignByStartDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date startDate) {
         ResponseEntity response;
         if (startDate != null) {
             try {
@@ -98,7 +127,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byEndDate/{endDate}")
-    public ResponseEntity getCampaignByEndDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
+    @ApiOperation(value = "Find campaign by end date")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 400, message = "The date passed is not in the correct format: yyyyMMdd"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<Campaign>> getCampaignByEndDateBetween(@PathVariable @DateTimeFormat(pattern = "yyyyMMdd") Date endDate) {
         ResponseEntity response;
         if (endDate != null) {
             try {
@@ -114,6 +148,11 @@ public class CampaignController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Create a new campaign")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Campaign created successfully"),
+        @ApiResponse(code = 400, message = "Some fields in the campaign passed are not correct"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity createCampaign(@RequestBody CampaignRQ campaign) {
         try {
             log.info("A new campaign will be created: {}", campaign);
@@ -134,6 +173,11 @@ public class CampaignController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Update campaign")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Campaign updated successfully"),
+        @ApiResponse(code = 400, message = "The date passed is not in the correct format: yyyyMMdd"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity editCampaign(@PathVariable Integer id, @RequestBody CampaignRQ campaignRq) {
         try {
             log.info("The campaign with id: {}, will be edited", id);
@@ -153,6 +197,12 @@ public class CampaignController {
     }
 
     @PutMapping("/updateStatus/{id}")
+    @ApiOperation(value = "Update campaign status")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Updated successfully"),
+        @ApiResponse(code = 400, message = "No/Bad status defined in HTTP Request to update campaign statuts"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity updateCampaignStatus(@PathVariable Integer id, @RequestBody CampaignStatusRQ statusRq) {
         String status;
         if (statusRq.isActive()) {
@@ -165,18 +215,25 @@ public class CampaignController {
             log.error("No/Bad status defined in HTTP Request to update campaign statuts");
             return ResponseEntity.badRequest().body("No/Bad status defined in HTTP Request to update campaign statuts");
         }
+        ResponseEntity response;
         try {
             log.info("The status of product with id: {}, will be updated", id);
             this.service.updateCampaignStatus(id, status);
-            return ResponseEntity.ok().build();
+            response = ResponseEntity.ok().build();
         } catch (RegistryNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            response = ResponseEntity.notFound().build();
         } catch (UpdateException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        return response;
     }
 
     @PostMapping("/assignClient/{id}")
+    @ApiOperation(value = "Assign client to campaign")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Client assigned successfully"),
+        @ApiResponse(code = 400, message = "Some of the data provided is incorrect"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity asignarCliente(@PathVariable Integer id, @RequestParam ClientCampaignRQ client) {
         try {
             this.service.assignClient(id, client);
@@ -188,8 +245,13 @@ public class CampaignController {
         }
     }
 
-    @PutMapping("/actualizar-contacto/{id}")
-    public ResponseEntity actualizarContacto(@PathVariable Integer id, @RequestParam String status) {
+    @PutMapping("/updateContact/{id}")
+    @ApiOperation(value = "Update contact of a client in a campaign ")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Updated successfully"),
+        @ApiResponse(code = 400, message = "No/Bad status defined in HTTP Request to update campaign statuts"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity updateContact(@PathVariable Integer id, @RequestParam String status) {
         try {
             this.service.actualizarContacto(id, ContactStatusEnum.valueOf(status));
             return ResponseEntity.ok().build();
@@ -202,7 +264,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byRegion/{region}")
-    public ResponseEntity getCampaignsByRegion(@PathVariable String region) {
+    @ApiOperation(value = "Get campaign by region")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByRegion(@PathVariable String region) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByRegion(region));
         } catch (NotFoundException e) {
@@ -213,7 +280,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberClientsInProgressEquals/{numberClientsInProgress}")
-    public ResponseEntity getCampaignsByNumberClientsInProgressEquals(@PathVariable Integer numberClientsInProgress) {
+    @ApiOperation(value = "Get campaign by number of clients in progress")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberClientsInProgressEquals(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressEquals(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -224,7 +296,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberClientsInProgressLessThan/{numberClientsInProgress}")
-    public ResponseEntity getCampaignsByNumberClientsInProgressLessThan(@PathVariable Integer numberClientsInProgress) {
+    @ApiOperation(value = "Get campaign by number of clients in progress less than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberClientsInProgressLessThan(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThan(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -235,7 +312,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberClientsInProgressLessThanEqual/{numberClientsInProgress}")
-    public ResponseEntity getCampaignsByNumberClientsInProgressLessThanEqual(@PathVariable Integer numberClientsInProgress) {
+    @ApiOperation(value = "Get campaign by number of clients in progress less than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberClientsInProgressLessThanEqual(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressLessThanEqual(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -246,7 +328,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberClientsInProgressGreaterThan/{numberClientsInProgress}")
-    public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThan(@PathVariable Integer numberClientsInProgress) {
+    @ApiOperation(value = "Get campaign by number of clients in progress greater than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberClientsInProgressGreaterThan(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThan(numberClientsInProgress));
         } catch (NotFoundException e) {
@@ -257,6 +344,11 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberClientsInProgressGreaterThanEqual/{numberClientsInProgress}")
+    @ApiOperation(value = "Get campaign by number of clients in progress greater than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity getCampaignsByNumberClientsInProgressGreaterThanEqual(@PathVariable Integer numberClientsInProgress) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberClientsInProgressGreaterThanEqual(numberClientsInProgress));
@@ -268,7 +360,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAcceptedClientsEquals/{numberAcceptedClients}")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsEquals(@PathVariable Integer numberAcceptedClients) {
+    @ApiOperation(value = "Get campaign by number of clients that accepted")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAcceptedClientsEquals(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsEquals(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -279,7 +376,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAcceptedClientsLessThan/{numberAcceptedClients}")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThan(@PathVariable Integer numberAcceptedClients) {
+    @ApiOperation(value = "Get campaign by number of clients that accepted less than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAcceptedClientsLessThan(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsLessThan(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -290,7 +392,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAcceptedClientsLessThanEqual/{numberAcceptedClients}")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsLessThanEqual(@PathVariable Integer numberAcceptedClients) {
+    @ApiOperation(value = "Get campaign by number of clients that accepted less than or equals to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAcceptedClientsLessThanEqual(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsLessThanEqual(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -301,7 +408,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAcceptedClientsGreaterThan/{numberAcceptedClients}")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThan(@PathVariable Integer numberAcceptedClients) {
+    @ApiOperation(value = "Get campaign by number of clients that accepted greater than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAcceptedClientsGreaterThan(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsGreaterThan(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -312,7 +424,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAcceptedClientsGreaterThanEqual/{numberAcceptedClients}")
-    public ResponseEntity getCampaignsByNumberAcceptedClientsGreaterThanEqual(@PathVariable Integer numberAcceptedClients) {
+    @ApiOperation(value = "Get campaign by number of clients that accepted greater than or equals to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAcceptedClientsGreaterThanEqual(@PathVariable Integer numberAcceptedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAcceptedClientsGreaterThanEqual(numberAcceptedClients));
         } catch (NotFoundException e) {
@@ -323,7 +440,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAssignedClientsEquals/{numberAssignedClients}")
-    public ResponseEntity getCampaignsByNumberAssignedClientsEquals(@PathVariable Integer numberAssignedClients) {
+    @ApiOperation(value = "Get campaign by number of assigned clients")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAssignedClientsEquals(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsEquals(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -334,7 +456,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAssignedClientsLessThan/{numberAssignedClients}")
-    public ResponseEntity getCampaignsByNumberAssignedClientsLessThan(@PathVariable Integer numberAssignedClients) {
+    @ApiOperation(value = "Get campaign by number of assigned clients less than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAssignedClientsLessThan(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThan(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -345,7 +472,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAssignedClientsLessThanEqual/{numberAssignedClients}")
-    public ResponseEntity getCampaignsByNumberAssignedClientsLessThanEqual(@PathVariable Integer numberAssignedClients) {
+    @ApiOperation(value = "Get campaign by number of assigned clients less than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAssignedClientsLessThanEqual(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsLessThanEqual(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -356,7 +488,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAssignedClientsGreaterThan/{numberAssignedClients}")
-    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThan(@PathVariable Integer numberAssignedClients) {
+    @ApiOperation(value = "Get campaign by number of assigned clients greater than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAssignedClientsGreaterThan(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThan(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -367,7 +504,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberAssignedClientsGreaterThanEqual/{numberAssignedClients}")
-    public ResponseEntity getCampaignsByNumberAssignedClientsGreaterThanEqual(@PathVariable Integer numberAssignedClients) {
+    @ApiOperation(value = "Get campaign by number of assigned clients greater than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberAssignedClientsGreaterThanEqual(@PathVariable Integer numberAssignedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberAssignedClientsGreaterThanEqual(numberAssignedClients));
         } catch (NotFoundException e) {
@@ -378,7 +520,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberRejectedClientsEquals/{numberRejectedClients}")
-    public ResponseEntity getCampaignsByNumberRejectedClientsEquals(@PathVariable Integer numberRejectedClients) {
+    @ApiOperation(value = "Get campaign by number of rejected clients")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberRejectedClientsEquals(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsEquals(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -389,7 +536,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberRejectedClientsLessThan/{numberRejectedClients}")
-    public ResponseEntity getCampaignsByNumberRejectedClientsLessThan(@PathVariable Integer numberRejectedClients) {
+    @ApiOperation(value = "Get campaign by number of rejected clients less than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberRejectedClientsLessThan(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsLessThan(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -400,7 +552,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberRejectedClientsLessThanEqual/{numberRejectedClients}")
-    public ResponseEntity getCampaignsByNumberRejectedClientsLessThanEqual(@PathVariable Integer numberRejectedClients) {
+    @ApiOperation(value = "Get campaign by number of rejected clients less than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberRejectedClientsLessThanEqual(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsLessThanEqual(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -411,7 +568,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberRejectedClientsGreaterThan/{numberRejectedClients}")
-    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThan(@PathVariable Integer numberRejectedClients) {
+    @ApiOperation(value = "Get campaign by number of rejected clients greater than given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberRejectedClientsGreaterThan(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsGreaterThan(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -422,7 +584,12 @@ public class CampaignController {
     }
 
     @GetMapping("/byNumberRejectedClientsGreaterThanEqual/{numberRejectedClients}")
-    public ResponseEntity getCampaignsByNumberRejectedClientsGreaterThanEqual(@PathVariable Integer numberRejectedClients) {
+    @ApiOperation(value = "Get campaign by number of rejected clients greater than or equal to given value")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity<List<Campaign>> getCampaignsByNumberRejectedClientsGreaterThanEqual(@PathVariable Integer numberRejectedClients) {
         try {
             return ResponseEntity.ok(this.service.getCampaignsByNumberRejectedClientsGreaterThanEqual(numberRejectedClients));
         } catch (NotFoundException e) {
@@ -433,7 +600,11 @@ public class CampaignController {
     }
 
     @GetMapping("/byKindProduct/{kindProduct}")
-    public ResponseEntity getCampaignsByKindProduct(@PathVariable String kindProduct) {
+    @ApiOperation(value = "Get campaign by kind product")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<Campaign>> getCampaignsByKindProduct(@PathVariable String kindProduct) {
         try {
             log.info("Retrieved the campaigns with {} as type of product", kindProduct);
             return ResponseEntity.ok(this.service.getCampaignsByKindProduct(kindProduct));
@@ -443,7 +614,11 @@ public class CampaignController {
     }
 
     @GetMapping("/byStatus/{status}")
-    public ResponseEntity getCampaignsByStatus(@PathVariable String status) {
+    @ApiOperation(value = "Get campaign by status")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<Campaign>> getCampaignsByStatus(@PathVariable String status) {
         try {
             log.info("Retrieved the campaigns with {} as status", status);
             return ResponseEntity.ok(this.service.getCampaignsByStatus(status));

@@ -53,8 +53,14 @@ public class CampaignService {
         }
     }
 
-    public List<Campaign> getCampaignByName(String name) {
-        return this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
+    public List<Campaign> getCampaignByName(String name) throws RegistryNotFoundException {
+        List<Campaign> result = this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
+        if (result.isEmpty()) {
+            log.info("The campaign with name {} was not found", name);
+            throw new RegistryNotFoundException("The campaign with name " + name + " was not found");
+        } else {
+            return result;
+        }
     }
 
     public List<Campaign> getCampaignByStartDate(Date startDate) throws RegistryNotFoundException {
