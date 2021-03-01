@@ -117,14 +117,14 @@ public class ContactabilityRegistryController {
         }
     }
 
-    @GetMapping("/byClientNameAndSurname")
+    @GetMapping("/byClientNameAndSurname/{clientName}-{clientSurname}")
     @ApiOperation(value = "Find contactability registries by name and surname")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Registries Found"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistrationByClientNameAndSurname(@RequestParam String clientName, @RequestParam String clientSurname) {
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistrationByClientNameAndSurname(@PathVariable String clientName, @PathVariable String clientSurname) {
         try {
-            log.info("Contactabilities for {} {} were retrieved");
+            log.info("Contactabilities for {} {} were retrieved", clientName, clientSurname);
             return ResponseEntity.ok(this.service.getContactabilityRegistrationByClientNameAndSurname(clientName, clientSurname));
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.notFound().build();
