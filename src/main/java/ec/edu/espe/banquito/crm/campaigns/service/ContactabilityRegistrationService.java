@@ -86,7 +86,7 @@ public class ContactabilityRegistrationService {
     }
 
     public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws RegistryNotFoundException {
-        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameAndClientSurname(clientName, clientSurname);
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameIgnoringCaseLikeAndClientSurnameIgnoringCaseLike(clientName, clientSurname);
         if (!contactabilities.isEmpty()) {
             return contactabilities;
         } else {
