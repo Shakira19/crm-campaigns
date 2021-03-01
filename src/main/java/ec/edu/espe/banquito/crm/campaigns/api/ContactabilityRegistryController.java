@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Alan Quimbita
  */
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/api/contactability-registry")
 @Slf4j
@@ -40,32 +42,26 @@ public class ContactabilityRegistryController {
         this.service = service;
     }
 
-    @GetMapping(path = "/byStatus")
+    @GetMapping(path = "/byStatus/{status}")
     @ApiOperation(value = "Find contactability registries by a single status")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Registries Found"),
         @ApiResponse(code = 400, message = "No status defined in HTTP Request to retrive contactability registries"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistryByStatus(@RequestBody ContactabilityStatusRQ statusesRQ) {
-        String status = "";
-        if (statusesRQ.isAccepted()) {
-            status = ContactStatusEnum.ACCEPTED.getStatus();
-        } else if (statusesRQ.isRejected()) {
-            status = ContactStatusEnum.REJECTED.getStatus();
-        } else if (statusesRQ.isAssigned()) {
-            status = ContactStatusEnum.ASSIGNED.getStatus();
-        } else if (statusesRQ.isInProgress()) {
-            status = ContactStatusEnum.INPROGRESS.getStatus();
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistryByStatus(@PathVariable String status) {
+        if (ContactStatusEnum.ACCEPTED.getStatus().equals(status)
+                || ContactStatusEnum.REJECTED.getStatus().equals(status)
+                || ContactStatusEnum.ASSIGNED.getStatus().equals(status)
+                || ContactStatusEnum.INPROGRESS.getStatus().equals(status)) {
+            try {
+                log.info("The contactability registries with status: {}, will be retrived", status);
+                return ResponseEntity.ok(this.service.getContactabilityRegistryByStatus(status));
+            } catch (RegistryNotFoundException ex) {
+                return ResponseEntity.notFound().build();
+            }
         } else {
             log.error("No status defined in HTTP Request to retrive contactability registries");
             return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            log.info("The contactability registries with status: {}, will be retrived", status);
-            return ResponseEntity.ok(this.service.getContactabilityRegistryByStatus(status));
-        } catch (RegistryNotFoundException ex) {
-            return ResponseEntity.notFound().build();
         }
     }
 
