@@ -6,6 +6,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
@@ -92,6 +93,22 @@ public class ContactabilityRegistrationService {
         } else {
             log.info("Couldn't find any contactabilities for {} {}", clientName, clientSurname);
             throw new RegistryNotFoundException("Couldn't find any contactabilities for " + clientName + " " + clientSurname);
+        }
+    }
+    
+    public List<ContactabilityRegistration> getCOntactabilityRegistrationByCampaign(Integer campaignId) throws NotFoundException{
+        Optional<Campaign> campaign = this.campaignRepo.findById(campaignId);
+        if(campaign.isPresent()) {
+            List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByCampaign(campaign.get());
+            if(!contactabilities.isEmpty()) {
+                return contactabilities;
+            } else {
+                log.info("Contactabilities with the campaign {} could not be found", campaign.get().getName());
+                throw new NotFoundException("Contactabilities with the campaign: "+campaign.get().getName()+" not found");
+            }
+        } else {
+            log.info("Campaign with campaign id {} could not be found", campaignId);
+            throw new NotFoundException("Campaign with id: "+campaignId+" not found");
         }
     }
 }

@@ -36,5 +36,7 @@ public interface ContactabilityRegistrationRepository extends JpaRepository<Cont
     List<ContactabilityRegistration> findByClientPhone(String clientPhone);
     
     List<ContactabilityRegistration> findByClientNameIgnoringCaseLikeAndClientSurnameIgnoringCaseLike(String clientName, String clientSurname);
+    
+    List<ContactabilityRegistration> findByCampaign(Campaign campaign);
 
 }
