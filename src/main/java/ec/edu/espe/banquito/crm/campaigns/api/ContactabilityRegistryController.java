@@ -129,5 +129,18 @@ public class ContactabilityRegistryController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    
+    @GetMapping("/byCampaign/{campaignId}")
+    @ApiOperation(value = "Find contactability registries by campaign id")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Registries Found"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistrationByCampaign(@PathVariable Integer campaignId) {
+        try {
+            log.info("Contactabilities with campaign id {} were found");
+            return ResponseEntity.ok(this.service.getCOntactabilityRegistrationByCampaign(campaignId));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
