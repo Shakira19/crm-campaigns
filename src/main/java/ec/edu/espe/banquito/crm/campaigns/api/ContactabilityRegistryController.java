@@ -6,7 +6,6 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.api;
 
-import ec.edu.espe.banquito.crm.campaigns.api.dto.ContactabilityStatusRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
@@ -14,16 +13,13 @@ import ec.edu.espe.banquito.crm.campaigns.service.ContactabilityRegistrationServ
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -65,47 +61,12 @@ public class ContactabilityRegistryController {
         }
     }
 
-    @GetMapping(path = "/byStatusIn")
-    @ApiOperation(value = "Find contactability registries by various status")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Registries Found"),
-        @ApiResponse(code = 400, message = "Not enough statuses defined in HTTP Request to retrive contactability registries"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistryByStatusIn(@RequestBody ContactabilityStatusRQ statusesRQ) {
-        List<String> statuses = new ArrayList<>();
-        if (statusesRQ.isAccepted()) {
-            statuses.add(ContactStatusEnum.ACCEPTED.getStatus());
-        }
-        if (statusesRQ.isRejected()) {
-            statuses.add(ContactStatusEnum.REJECTED.getStatus());
-        }
-        if (statusesRQ.isAssigned()) {
-            statuses.add(ContactStatusEnum.ASSIGNED.getStatus());
-        }
-        if (statusesRQ.isInProgress()) {
-            statuses.add(ContactStatusEnum.INPROGRESS.getStatus());
-        }
-        if (statuses.size() < 2) {
-            log.error("Not enough statuses defined in HTTP Request to retrive contactability registries");
-            return ResponseEntity.badRequest().build();
-        }
-
-        ResponseEntity response;
-        try {
-            log.info("The contactability registries with one of this statuses: {}, will be retrived", statuses);
-            response = ResponseEntity.ok(this.service.getContactabilityRegistryByStatusIn(statuses));
-        } catch (RegistryNotFoundException ex) {
-            response = ResponseEntity.notFound().build();
-        }
-        return response;
-    }
-
-    @GetMapping("/byEmail")
+    @GetMapping("/byEmail/{email}")
     @ApiOperation(value = "Find contactability registries by email")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Registries Found"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityByEmail(@RequestParam String email) {
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityByEmail(@PathVariable String email) {
         try {
             return ResponseEntity.ok(this.service.getContactabilityRegistrationByEmail(email));
         } catch (RegistryNotFoundException e) {
@@ -155,14 +116,14 @@ public class ContactabilityRegistryController {
         }
     }
 
-    @GetMapping("/byClientNameAndSurname")
+    @GetMapping("/byClientNameAndSurname/{clientName}-{clientSurname}")
     @ApiOperation(value = "Find contactability registries by name and surname")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Registries Found"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistrationByClientNameAndSurname(@RequestParam String clientName, @RequestParam String clientSurname) {
+    public ResponseEntity<List<ContactabilityRegistration>> getContactabilityRegistrationByClientNameAndSurname(@PathVariable String clientName, @PathVariable String clientSurname) {
         try {
-            log.info("Contactabilities for {} {} were retrieved");
+            log.info("Contactabilities for {} {} were retrieved", clientName, clientSurname);
             return ResponseEntity.ok(this.service.getContactabilityRegistrationByClientNameAndSurname(clientName, clientSurname));
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.notFound().build();

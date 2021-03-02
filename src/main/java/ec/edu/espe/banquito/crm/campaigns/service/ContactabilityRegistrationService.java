@@ -6,7 +6,6 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.service;
 
-import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
@@ -40,17 +39,6 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("The campaigns with status " + status + " were not found");
         } else {
             log.info("The campaigns with status {} were retrieved", status);
-            return result;
-        }
-    }
-
-    public List<ContactabilityRegistration> getContactabilityRegistryByStatusIn(List<String> statuses) throws RegistryNotFoundException {
-        List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByStatusIn(statuses);
-        if (result.isEmpty()) {
-            log.info("The campaigns with statuses {} were not found", statuses);
-            throw new RegistryNotFoundException("The campaigns with status " + statuses + " were not found");
-        } else {
-            log.info("The campaigns with statuses {} were retrieved", statuses);
             return result;
         }
     }
@@ -98,7 +86,7 @@ public class ContactabilityRegistrationService {
     }
 
     public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws RegistryNotFoundException {
-        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameAndClientSurname(clientName, clientSurname);
+        List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameIgnoringCaseLikeAndClientSurnameIgnoringCaseLike(clientName, clientSurname);
         if (!contactabilities.isEmpty()) {
             return contactabilities;
         } else {
