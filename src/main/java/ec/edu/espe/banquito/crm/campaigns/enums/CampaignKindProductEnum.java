@@ -11,7 +11,7 @@ package ec.edu.espe.banquito.crm.campaigns.enums;
  */
 public enum CampaignKindProductEnum {
     LOAN("LOA", "PRESTAMO"),
-    ASSURANCE("ASS", "SEGURO");
+    INSURANCE("INS", "SEGURO");
 
     private final String type;
     private final String description;

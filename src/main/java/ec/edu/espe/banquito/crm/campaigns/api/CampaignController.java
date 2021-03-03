@@ -249,39 +249,7 @@ public class CampaignController {
         }
     }
 
-    @PutMapping("/updateContact/{id}")
-    @ApiOperation(value = "Update contact of a client in a campaign ")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Updated successfully"),
-        @ApiResponse(code = 400, message = "No/Bad status defined in HTTP Request to update campaign statuts"),
-        @ApiResponse(code = 500, message = "Internal Server Error")})
-    public ResponseEntity updateContact(@PathVariable Integer id, @RequestParam String status) {
-        try {
-            this.service.actualizarContacto(id, ContactStatusEnum.valueOf(status));
-            return ResponseEntity.ok().build();
-        } catch (RegistryNotFoundException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/byRegion/{region}")
-    @ApiOperation(value = "Get campaign by region")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Registries Found"),
-        @ApiResponse(code = 404, message = "Not Found"),
-        @ApiResponse(code = 500, message = "Internal Server Error")})
-    public ResponseEntity<List<Campaign>> getCampaignsByRegion(@PathVariable String region) {
-        try {
-            return ResponseEntity.ok(this.service.getCampaignsByRegion(region));
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+    
 
     @GetMapping("/byNumberClientsInProgressEquals/{numberClientsInProgress}")
     @ApiOperation(value = "Get campaign by number of clients in progress")

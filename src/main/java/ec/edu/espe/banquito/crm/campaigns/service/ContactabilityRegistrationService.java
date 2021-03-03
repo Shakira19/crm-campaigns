@@ -6,6 +6,7 @@
  */
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
@@ -109,6 +110,17 @@ public class ContactabilityRegistrationService {
         } else {
             log.info("Campaign with campaign id {} could not be found", campaignId);
             throw new NotFoundException("Campaign with id: "+campaignId+" not found");
+        }
+    }
+    
+    public void actualizarContacto(Integer contactabilityId, ContactStatusEnum status) throws RegistryNotFoundException {
+        Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
+        if (contactabilityToUpdate.isPresent()) {
+            ContactabilityRegistration updatedContactability = contactabilityToUpdate.get();
+            updatedContactability.setStatus(status.getStatus());
+            this.contactabilityRegistrationRepo.save(updatedContactability);
+        } else {
+            throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
         }
     }
 }
