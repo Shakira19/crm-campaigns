@@ -162,17 +162,6 @@ public class CampaignService {
 
     }
 
-    public void actualizarContacto(Integer contactabilityId, ContactStatusEnum status) throws RegistryNotFoundException {
-        Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
-        if (contactabilityToUpdate.isPresent()) {
-            ContactabilityRegistration updatedContactability = contactabilityToUpdate.get();
-            updatedContactability.setStatus(status.getStatus());
-            this.contactabilityRegistrationRepo.save(updatedContactability);
-        } else {
-            throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
-        }
-    }
-
     public List<Campaign> getCampaignsByRegion(String region) {
         List<Campaign> campaigns = this.campaignRepo.findByRegion(region);
         if (!campaigns.isEmpty()) {
