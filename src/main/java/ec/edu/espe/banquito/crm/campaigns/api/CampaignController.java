@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author cofre
  */
-
 @CrossOrigin
 @RestController
 @RequestMapping("/api/campaigns")
@@ -156,22 +155,22 @@ public class CampaignController {
         @ApiResponse(code = 200, message = "Campaign created successfully"),
         @ApiResponse(code = 400, message = "Some fields in the campaign passed are not correct"),
         @ApiResponse(code = 500, message = "Internal Server Error")})
-    public ResponseEntity createCampaign(@RequestBody CampaignRQ campaign) {
+    public ResponseEntity<Campaign> createCampaign(@RequestBody CampaignRQ campaign) {
         try {
             log.info("A new campaign will be created: {}", campaign);
-            this.service.createCampaign(Campaign.builder()
+            return ResponseEntity.ok(this.service.createCampaign(Campaign.builder()
                     .name(campaign.getName())
                     .description(campaign.getDescription())
                     .startDate(campaign.getStartDate())
                     .endDate(campaign.getEndDate())
                     .urlTermsConditions(campaign.getUrlTermsConditions())
+                    .kindProduct(campaign.getKindProduct())
                     .region(campaign.getRegion())
-                    .build());
-            return ResponseEntity.ok().build();
+                    .build()));
         } catch (InsertException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -231,7 +230,6 @@ public class CampaignController {
         return response;
     }
 
-
     @PostMapping("/assignClient/{id}")
     @ApiOperation(value = "Assign client to campaign")
     @ApiResponses(value = {
@@ -248,8 +246,6 @@ public class CampaignController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    
 
     @GetMapping("/byNumberClientsInProgressEquals/{numberClientsInProgress}")
     @ApiOperation(value = "Get campaign by number of clients in progress")

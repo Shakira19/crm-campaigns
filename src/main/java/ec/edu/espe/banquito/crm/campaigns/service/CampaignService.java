@@ -85,7 +85,7 @@ public class CampaignService {
         }
     }
 
-    public void createCampaign(Campaign campaign) throws InsertException {
+    public Campaign createCampaign(Campaign campaign) throws InsertException {
         try {
             campaign.setStatus(CampaignStatusEnum.ACTIVE.getStatus());
             campaign.setTotalNumberClients(0);
@@ -95,6 +95,7 @@ public class CampaignService {
             campaign.setNumberRejectedClients(0);
             this.campaignRepo.save(campaign);
             log.info("The campaign {}, was created", campaign);
+            return campaign;
         } catch (Exception e) {
             log.error("The campaign {} could not be created", campaign);
             throw new InsertException("campaign", "The campaign {} could not be created");
