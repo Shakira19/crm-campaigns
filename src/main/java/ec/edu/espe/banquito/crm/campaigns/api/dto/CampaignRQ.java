@@ -21,5 +21,6 @@ public class CampaignRQ {
     private Date endDate;
     private String urlTermsConditions;
     private String region;
+    private String kindProduct;
 
 }
