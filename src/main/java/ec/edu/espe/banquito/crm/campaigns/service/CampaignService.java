@@ -158,6 +158,9 @@ public class CampaignService {
                 this.contactabilityRegistrationRepo.save(contactabilityRegistration);
                 Integer assignedClients = campaignToRegister.getNumberAssignedClients();
                 assignedClients++;
+                Integer totalClients = campaignToRegister.getTotalNumberClients();
+                totalClients++;
+                campaignToRegister.setTotalNumberClients(totalClients);
                 campaignToRegister.setNumberAssignedClients(assignedClients);
                 this.campaignRepo.save(campaignToRegister);
                 log.info("New contactability registry of client {} in campaign with id: {}, was created", client, id);
