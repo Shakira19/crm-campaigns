@@ -139,10 +139,12 @@ public class CampaignService {
     }
 
     public void assignClient(Integer id, ClientCampaignRQ client) throws RegistryNotFoundException, InsertException {
-
+        
         try {
             Campaign campaignToRegister = this.getCampaignById(id);
-            ContactabilityRegistration contactabilityRegistration = ContactabilityRegistration.builder()
+            ContactabilityRegistration contactabilityValidation = this.contactabilityRegistrationRepo.findByClientIdentificationAndCampaign(client.getClientIdentification(), campaignToRegister);
+            if(contactabilityValidation == null) {
+                ContactabilityRegistration contactabilityRegistration = ContactabilityRegistration.builder()
                     .campaign(campaignToRegister)
                     .clientId(client.getClientId())
                     .clientIdentification(client.getClientIdentification())
@@ -151,8 +153,12 @@ public class CampaignService {
                     .clientPhone(client.getClientPhone())
                     .clientEmail(client.getClientEmail())
                     .status(ContactStatusEnum.ASSIGNED.getStatus()).build();
-            this.contactabilityRegistrationRepo.save(contactabilityRegistration);
-            log.info("New contactability registry of client {} in campaign with id: {}, was created", client, id);
+                this.contactabilityRegistrationRepo.save(contactabilityRegistration);
+                log.info("New contactability registry of client {} in campaign with id: {}, was created", client, id);
+            } else {
+                log.error("Client wirh id {} is already registered in campaign {}", client.getClientIdentification(), id);
+                throw new InsertException("contactability_registration", "client already registered in the campaign");
+            }
         } catch (RegistryNotFoundException e) {
             throw e;
         } catch (Exception e) {

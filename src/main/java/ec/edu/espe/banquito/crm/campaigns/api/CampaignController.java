@@ -9,7 +9,6 @@ import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.CampaignStatusRQ;
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
-import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.InsertException;
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
@@ -22,8 +21,6 @@ import io.swagger.annotations.ApiResponses;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -35,7 +32,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -243,6 +239,8 @@ public class CampaignController {
             this.service.assignClient(id, client);
             return ResponseEntity.ok().build();
         } catch (RegistryNotFoundException e) {
+            return ResponseEntity.badRequest().build();
+        } catch(InsertException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
