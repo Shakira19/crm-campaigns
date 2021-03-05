@@ -116,9 +116,46 @@ public class ContactabilityRegistrationService {
     public void actualizarContacto(Integer contactabilityId, ContactStatusEnum status) throws RegistryNotFoundException {
         Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
         if (contactabilityToUpdate.isPresent()) {
+            Campaign campaignToUpdate = contactabilityToUpdate.get().getCampaign();
+            ContactabilityRegistration contactabilityRetrieved = contactabilityToUpdate.get();
+            if(contactabilityRetrieved.getStatus().equals("ASS")){
+                Integer assignedClients = campaignToUpdate.getNumberAssignedClients();
+                assignedClients--;
+                campaignToUpdate.setNumberAssignedClients(assignedClients);
+            } else if(contactabilityRetrieved.getStatus().equals("INP")){
+                Integer clientsInProgress = campaignToUpdate.getNumberClientsInProgress();
+                clientsInProgress--;
+                campaignToUpdate.setNumberClientsInProgress(clientsInProgress);
+            } else if(contactabilityRetrieved.getStatus().equals("REJ")) {
+                Integer rejectedClients = campaignToUpdate.getNumberRejectedClients();
+                rejectedClients--;
+                campaignToUpdate.setNumberRejectedClients(rejectedClients);
+            } else if(contactabilityRetrieved.getStatus().equals("ACC")) {
+                Integer acceptedClients = campaignToUpdate.getNumberAcceptedClients();
+                acceptedClients--;
+                campaignToUpdate.setNumberAcceptedClients(acceptedClients);
+            }
+            if(status.getStatus().equals("ASS")){
+                Integer assignedClients = campaignToUpdate.getNumberAssignedClients();
+                assignedClients++;
+                campaignToUpdate.setNumberAssignedClients(assignedClients);
+            } else if(status.getStatus().equals("INP")){
+                Integer clientsInProgress = campaignToUpdate.getNumberClientsInProgress();
+                clientsInProgress++;
+                campaignToUpdate.setNumberClientsInProgress(clientsInProgress);
+            } else if(status.getStatus().equals("REJ")) {
+                Integer rejectedClients = campaignToUpdate.getNumberRejectedClients();
+                rejectedClients++;
+                campaignToUpdate.setNumberRejectedClients(rejectedClients);
+            } else if(status.getStatus().equals("ACC")) {
+                Integer acceptedClients = campaignToUpdate.getNumberAcceptedClients();
+                acceptedClients++;
+                campaignToUpdate.setNumberAcceptedClients(acceptedClients);
+            }
             ContactabilityRegistration updatedContactability = contactabilityToUpdate.get();
             updatedContactability.setStatus(status.getStatus());
             this.contactabilityRegistrationRepo.save(updatedContactability);
+            this.campaignRepo.save(campaignToUpdate);
         } else {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
         }

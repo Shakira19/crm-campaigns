@@ -156,6 +156,10 @@ public class CampaignService {
                     .clientEmail(client.getClientEmail())
                     .status(ContactStatusEnum.ASSIGNED.getStatus()).build();
                 this.contactabilityRegistrationRepo.save(contactabilityRegistration);
+                Integer assignedClients = campaignToRegister.getNumberAssignedClients();
+                assignedClients++;
+                campaignToRegister.setNumberAssignedClients(assignedClients);
+                this.campaignRepo.save(campaignToRegister);
                 log.info("New contactability registry of client {} in campaign with id: {}, was created", client, id);
             } else {
                 log.error("Client wirh id {} is already registered in campaign {}", client.getClientIdentification(), id);
