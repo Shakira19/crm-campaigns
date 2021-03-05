@@ -25,7 +25,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, Integer> {
 
     Optional<Campaign> findById(Integer id);
 
-    List<Campaign> findByNameLikeIgnoreCaseOrderByNameAsc(String name);
+    List<Campaign> findByNameContainingIgnoreCaseOrderByNameAsc(String name);
 
     List<Campaign> findByStartDate(@DateTimeFormat(pattern = "yyyy-MM-dd") @Param("from") Date startDate);
 
