@@ -109,6 +109,7 @@ public class CampaignService {
             editedCampaign.setDescription(campaign.getDescription());
             editedCampaign.setStartDate(campaign.getStartDate());
             editedCampaign.setEndDate(campaign.getEndDate());
+            editedCampaign.setKindProduct(campaign.getKindProduct());
             editedCampaign.setUrlTermsConditions(campaign.getUrlTermsConditions());
             editedCampaign.setRegion(campaign.getRegion());
             this.campaignRepo.save(editedCampaign);
