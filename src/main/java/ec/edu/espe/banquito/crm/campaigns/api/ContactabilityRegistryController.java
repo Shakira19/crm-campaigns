@@ -155,7 +155,16 @@ public class ContactabilityRegistryController {
         @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity updateContact(@PathVariable Integer id, @RequestParam String status) {
         try {
-            this.service.actualizarContacto(id, ContactStatusEnum.valueOf(status));
+            if(ContactStatusEnum.ASSIGNED.getStatus().equals(status)){
+                this.service.actualizarContacto(id, ContactStatusEnum.ASSIGNED);
+            } else if(ContactStatusEnum.INPROGRESS.getStatus().equals(status)) {
+                this.service.actualizarContacto(id, ContactStatusEnum.INPROGRESS);
+            } else if(ContactStatusEnum.REJECTED.getStatus().equals(status)) {
+                this.service.actualizarContacto(id, ContactStatusEnum.REJECTED);
+            } else if(ContactStatusEnum.ACCEPTED.getStatus().equals(status)) {
+                this.service.actualizarContacto(id, ContactStatusEnum.ACCEPTED);
+            }
+            log.info("Changed status of {} to {}", id, status);
             return ResponseEntity.ok().build();
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
