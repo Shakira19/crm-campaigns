@@ -6,7 +6,6 @@
 package ec.edu.espe.banquito.crm.campaigns.service;
 
 import ec.edu.espe.banquito.crm.campaigns.api.dto.ClientCampaignRQ;
-import ec.edu.espe.banquito.crm.campaigns.enums.CampaignKindProductEnum;
 import ec.edu.espe.banquito.crm.campaigns.enums.CampaignStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
@@ -54,7 +53,7 @@ public class CampaignService {
     }
 
     public List<Campaign> getCampaignByName(String name) throws RegistryNotFoundException {
-        List<Campaign> result = this.campaignRepo.findByNameLikeIgnoreCaseOrderByNameAsc(name);
+        List<Campaign> result = this.campaignRepo.findByNameContainingIgnoreCaseOrderByNameAsc(name);
         if (result.isEmpty()) {
             log.info("The campaign with name {} was not found", name);
             throw new RegistryNotFoundException("The campaign with name " + name + " was not found");
@@ -367,7 +366,7 @@ public class CampaignService {
     }
 
     public List<Campaign> getCampaignsByKindProduct(String kindProduct) throws NotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByKindProduct(CampaignKindProductEnum.valueOf(kindProduct).getType());
+        List<Campaign> campaigns = this.campaignRepo.findByKindProduct(kindProduct);
         if (!campaigns.isEmpty()) {
             return campaigns;
         } else {
@@ -377,7 +376,7 @@ public class CampaignService {
     }
 
     public List<Campaign> getCampaignsByStatus(String status) throws NotFoundException {
-        List<Campaign> campaigns = this.campaignRepo.findByStatus(CampaignStatusEnum.valueOf(status).getStatus());
+        List<Campaign> campaigns = this.campaignRepo.findByStatus(status);
         if (!campaigns.isEmpty()) {
             return campaigns;
         } else {
