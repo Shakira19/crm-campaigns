@@ -10,8 +10,8 @@ package ec.edu.espe.banquito.crm.campaigns.enums;
  * @author esteban
  */
 public enum CampaignKindProductEnum {
-    LOAN("LOA", "PRESTAMO"),
-    INSURANCE("INS", "SEGURO");
+    LOAN("PRE", "PRESTAMO"),
+    INSURANCE("SEG", "SEGURO");
 
     private final String type;
     private final String description;
