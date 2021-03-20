@@ -9,6 +9,7 @@ package ec.edu.espe.banquito.crm.campaigns.service;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
@@ -25,15 +26,15 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class ContactabilityRegistrationService {
-
+    
     private final CampaignRepository campaignRepo;
     private final ContactabilityRegistrationRepository contactabilityRegistrationRepo;
-
+    
     public ContactabilityRegistrationService(CampaignRepository campaignRepo, ContactabilityRegistrationRepository contactabilityRegistrationRepo) {
         this.campaignRepo = campaignRepo;
         this.contactabilityRegistrationRepo = contactabilityRegistrationRepo;
     }
-
+    
     public List<ContactabilityRegistration> getContactabilityRegistryByStatus(String status) throws RegistryNotFoundException {
         List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByStatusIs(status);
         if (result.isEmpty()) {
@@ -44,7 +45,7 @@ public class ContactabilityRegistrationService {
             return result;
         }
     }
-
+    
     public List<ContactabilityRegistration> getContactabilityRegistrationByEmail(String email) throws RegistryNotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientEmail(email);
         if (!contactabilities.isEmpty()) {
@@ -55,7 +56,7 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("Not found registries that have email: " + email);
         }
     }
-
+    
     public List<ContactabilityRegistration> getContactabilityRegistryByClientIdentification(String clientIdentification) throws RegistryNotFoundException {
         List<ContactabilityRegistration> result = this.contactabilityRegistrationRepo.findByClientIdentificationOrderByClientSurnameDesc(clientIdentification);
         if (result.isEmpty()) {
@@ -66,7 +67,7 @@ public class ContactabilityRegistrationService {
             return result;
         }
     }
-
+    
     public ContactabilityRegistration getContactabilityRegistryByClientIdentificationAndCampaign(String identification, Integer campaignId) throws RegistryNotFoundException {
         Optional<Campaign> campaign = this.campaignRepo.findById(campaignId);
         if (campaign.isPresent()) {
@@ -76,7 +77,7 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("The campaign with id" + campaignId + " does not exists");
         }
     }
-
+    
     public List<ContactabilityRegistration> getContactabilityRegistrationByClientPhone(String clientPhone) throws RegistryNotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientPhone(clientPhone);
         if (!contactabilities.isEmpty()) {
@@ -86,7 +87,7 @@ public class ContactabilityRegistrationService {
             throw new RegistryNotFoundException("No existe ningún contacto registrado con el telefono: " + clientPhone);
         }
     }
-
+    
     public List<ContactabilityRegistration> getContactabilityRegistrationByClientNameAndSurname(String clientName, String clientSurname) throws RegistryNotFoundException {
         List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByClientNameIgnoringCaseLikeAndClientSurnameIgnoringCaseLike(clientName, clientSurname);
         if (!contactabilities.isEmpty()) {
@@ -97,19 +98,19 @@ public class ContactabilityRegistrationService {
         }
     }
     
-    public List<ContactabilityRegistration> getCOntactabilityRegistrationByCampaign(Integer campaignId) throws NotFoundException{
+    public List<ContactabilityRegistration> getCOntactabilityRegistrationByCampaign(Integer campaignId) throws NotFoundException {
         Optional<Campaign> campaign = this.campaignRepo.findById(campaignId);
-        if(campaign.isPresent()) {
+        if (campaign.isPresent()) {
             List<ContactabilityRegistration> contactabilities = this.contactabilityRegistrationRepo.findByCampaign(campaign.get());
-            if(!contactabilities.isEmpty()) {
+            if (!contactabilities.isEmpty()) {
                 return contactabilities;
             } else {
                 log.info("Contactabilities with the campaign {} could not be found", campaign.get().getName());
-                throw new NotFoundException("Contactabilities with the campaign: "+campaign.get().getName()+" not found");
+                throw new NotFoundException("Contactabilities with the campaign: " + campaign.get().getName() + " not found");
             }
         } else {
             log.info("Campaign with campaign id {} could not be found", campaignId);
-            throw new NotFoundException("Campaign with id: "+campaignId+" not found");
+            throw new NotFoundException("Campaign with id: " + campaignId + " not found");
         }
     }
     
@@ -118,36 +119,36 @@ public class ContactabilityRegistrationService {
         if (contactabilityToUpdate.isPresent()) {
             Campaign campaignToUpdate = contactabilityToUpdate.get().getCampaign();
             ContactabilityRegistration contactabilityRetrieved = contactabilityToUpdate.get();
-            if(contactabilityRetrieved.getStatus().equals("ASS")){
+            if (contactabilityRetrieved.getStatus().equals("ASS")) {
                 Integer assignedClients = campaignToUpdate.getNumberAssignedClients();
                 assignedClients--;
                 campaignToUpdate.setNumberAssignedClients(assignedClients);
-            } else if(contactabilityRetrieved.getStatus().equals("INP")){
+            } else if (contactabilityRetrieved.getStatus().equals("INP")) {
                 Integer clientsInProgress = campaignToUpdate.getNumberClientsInProgress();
                 clientsInProgress--;
                 campaignToUpdate.setNumberClientsInProgress(clientsInProgress);
-            } else if(contactabilityRetrieved.getStatus().equals("REJ")) {
+            } else if (contactabilityRetrieved.getStatus().equals("REJ")) {
                 Integer rejectedClients = campaignToUpdate.getNumberRejectedClients();
                 rejectedClients--;
                 campaignToUpdate.setNumberRejectedClients(rejectedClients);
-            } else if(contactabilityRetrieved.getStatus().equals("ACC")) {
+            } else if (contactabilityRetrieved.getStatus().equals("ACC")) {
                 Integer acceptedClients = campaignToUpdate.getNumberAcceptedClients();
                 acceptedClients--;
                 campaignToUpdate.setNumberAcceptedClients(acceptedClients);
             }
-            if(status.getStatus().equals("ASS")){
+            if (status.getStatus().equals("ASS")) {
                 Integer assignedClients = campaignToUpdate.getNumberAssignedClients();
                 assignedClients++;
                 campaignToUpdate.setNumberAssignedClients(assignedClients);
-            } else if(status.getStatus().equals("INP")){
+            } else if (status.getStatus().equals("INP")) {
                 Integer clientsInProgress = campaignToUpdate.getNumberClientsInProgress();
                 clientsInProgress++;
                 campaignToUpdate.setNumberClientsInProgress(clientsInProgress);
-            } else if(status.getStatus().equals("REJ")) {
+            } else if (status.getStatus().equals("REJ")) {
                 Integer rejectedClients = campaignToUpdate.getNumberRejectedClients();
                 rejectedClients++;
                 campaignToUpdate.setNumberRejectedClients(rejectedClients);
-            } else if(status.getStatus().equals("ACC")) {
+            } else if (status.getStatus().equals("ACC")) {
                 Integer acceptedClients = campaignToUpdate.getNumberAcceptedClients();
                 acceptedClients++;
                 campaignToUpdate.setNumberAcceptedClients(acceptedClients);
@@ -156,6 +157,23 @@ public class ContactabilityRegistrationService {
             updatedContactability.setStatus(status.getStatus());
             this.contactabilityRegistrationRepo.save(updatedContactability);
             this.campaignRepo.save(campaignToUpdate);
+        } else {
+            throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
+        }
+    }
+    
+    public void updateContactDescription(Integer contactabilityId, String description) throws RegistryNotFoundException, UpdateException {
+        Optional<ContactabilityRegistration> contactabilityToUpdate = this.contactabilityRegistrationRepo.findById(contactabilityId);
+        if (contactabilityToUpdate.isPresent()) {
+            try {
+                ContactabilityRegistration contactabilityRetrieved = contactabilityToUpdate.get();
+                contactabilityRetrieved.setDescription(description);
+                this.contactabilityRegistrationRepo.save(contactabilityRetrieved);
+                log.info("Changed description of contactability with id {}", contactabilityId);
+            } catch (Exception e) {
+                log.error("There was an error updating contactability description with id {} ", contactabilityId);
+                throw new UpdateException("contactability registry", "There was an error updating contactability description with id: " + contactabilityId, e);
+            }
         } else {
             throw new RegistryNotFoundException("No se encontro un registro de contactabilidad con id: " + contactabilityId);
         }
