@@ -8,12 +8,15 @@ package ec.edu.espe.banquito.crm.campaigns.api;
 
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
+import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.service.ContactabilityRegistrationService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -132,7 +135,7 @@ public class ContactabilityRegistryController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @GetMapping("/byCampaign/{campaignId}")
     @ApiOperation(value = "Find contactability registries by campaign id")
     @ApiResponses(value = {
@@ -146,7 +149,7 @@ public class ContactabilityRegistryController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @PutMapping("/updateContact/{id}")
     @ApiOperation(value = "Update contact of a client in a campaign ")
     @ApiResponses(value = {
@@ -155,13 +158,13 @@ public class ContactabilityRegistryController {
         @ApiResponse(code = 500, message = "Internal Server Error")})
     public ResponseEntity updateContact(@PathVariable Integer id, @RequestParam String status) {
         try {
-            if(ContactStatusEnum.ASSIGNED.getStatus().equals(status)){
+            if (ContactStatusEnum.ASSIGNED.getStatus().equals(status)) {
                 this.service.actualizarContacto(id, ContactStatusEnum.ASSIGNED);
-            } else if(ContactStatusEnum.INPROGRESS.getStatus().equals(status)) {
+            } else if (ContactStatusEnum.INPROGRESS.getStatus().equals(status)) {
                 this.service.actualizarContacto(id, ContactStatusEnum.INPROGRESS);
-            } else if(ContactStatusEnum.REJECTED.getStatus().equals(status)) {
+            } else if (ContactStatusEnum.REJECTED.getStatus().equals(status)) {
                 this.service.actualizarContacto(id, ContactStatusEnum.REJECTED);
-            } else if(ContactStatusEnum.ACCEPTED.getStatus().equals(status)) {
+            } else if (ContactStatusEnum.ACCEPTED.getStatus().equals(status)) {
                 this.service.actualizarContacto(id, ContactStatusEnum.ACCEPTED);
             }
             log.info("Changed status of {} to {}", id, status);
@@ -172,5 +175,25 @@ public class ContactabilityRegistryController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PutMapping("/description/{id}")
+    @ApiOperation(value = "Update description of a client in a campaign ")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Updated successfully"),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal Server Error")})
+    public ResponseEntity updateDescription(@PathVariable Integer id, @RequestParam String description) {
+        ResponseEntity response;
+        try {
+            log.info("The description of cotactability registry with id: {}, will be updated", id);
+            this.service.updateContactDescription(id, description);
+            response = ResponseEntity.ok().build();
+        } catch (RegistryNotFoundException ex) {
+            response = ResponseEntity.notFound().build();
+        } catch (UpdateException ex) {
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
     }
 }

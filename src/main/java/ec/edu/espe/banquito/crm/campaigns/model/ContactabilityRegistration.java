@@ -34,6 +34,9 @@ public class ContactabilityRegistration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
+    @Column(name = "description", length = 256)
+    private String description;
 
     @Column(name = "client_id", length = 24)
     private String clientId;
