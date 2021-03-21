@@ -1,9 +1,3 @@
-/*
- * Creation date: 22 feb. 2021
- * Company: ESPE
- * Project: Banco Banquito
- * Module: Banco Banquito - CRM
- */
 package ec.edu.espe.banquito.crm.campaigns.config;
 
 import org.springframework.context.annotation.Bean;
@@ -17,10 +11,6 @@ import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- *
- * @author Alan Quimbita
- */
 @Configuration
 @EnableSwagger2
 public class SpringFoxConfig {

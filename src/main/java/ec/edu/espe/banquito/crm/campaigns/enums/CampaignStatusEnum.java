@@ -1,15 +1,5 @@
-/*
- * Creation date: 22 feb. 2021
- * Company: ESPE
- * Project: Banco Banquito
- * Module: Banco Banquito - CRM
- */
 package ec.edu.espe.banquito.crm.campaigns.enums;
 
-/**
- *
- * @author Alan Quimbita
- */
 public enum CampaignStatusEnum {
 
     ACTIVE("ACT", "ACTIVE"),
