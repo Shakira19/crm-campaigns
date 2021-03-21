@@ -149,7 +149,8 @@ public class CampaignService {
                         .clientSurname(client.getClientSurname())
                         .clientPhone(client.getClientPhone())
                         .clientEmail(client.getClientEmail())
-                        .status(ContactStatusEnum.ASSIGNED.getStatus()).build();
+                        .status(ContactStatusEnum.ASSIGNED.getStatus())
+                        .modificationDate(new Date()).build();
                 this.contactabilityRegistrationRepo.save(contactabilityRegistration);
                 Integer assignedClients = campaignToRegister.getNumberAssignedClients();
                 assignedClients++;

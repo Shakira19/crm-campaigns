@@ -1,5 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.model;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,5 +63,14 @@ public class ContactabilityRegistration {
 
     @Column(name = "status", length = 3)
     private String status;
+    
+    @Column(name = "accepted_fees")
+    private Integer acceptedFees;
+    
+    @Column(name = "solca_tax")
+    private Float solcaTax;
+    
+    @Column(name = "modification_date")
+    private Date modificationDate;
 
 }

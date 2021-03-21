@@ -8,6 +8,7 @@ import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
 import ec.edu.espe.banquito.crm.campaigns.repository.ContactabilityRegistrationRepository;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -176,6 +177,7 @@ public class ContactabilityRegistrationService {
             }
             ContactabilityRegistration updatedContactability = contactabilityToUpdate.get();
             updatedContactability.setStatus(status.getStatus());
+            updatedContactability.setModificationDate(new Date());
             this.contactabilityRegistrationRepo.save(updatedContactability);
             this.campaignRepo.save(campaignToUpdate);
         } else {
