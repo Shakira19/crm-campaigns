@@ -16,7 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <sonar.projectKey>Shakira19_crm-campaigns</sonar.projectKey>
-        <sonar.organization>crm-banco-banquito</sonar.organization>
+        <sonar.organization>hakira19</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
     <dependencies>
