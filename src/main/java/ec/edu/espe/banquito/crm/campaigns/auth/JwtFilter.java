@@ -1,4 +1,4 @@
-package ec.edu.espe.banquito.crm.campaigns.jwtutils;
+package ec.edu.espe.banquito.crm.campaigns.auth;
 
 import ec.edu.espe.banquito.crm.campaigns.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
