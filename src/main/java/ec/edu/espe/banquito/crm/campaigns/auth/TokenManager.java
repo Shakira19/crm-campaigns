@@ -1,4 +1,4 @@
-package ec.edu.espe.banquito.crm.campaigns.jwtutils;
+package ec.edu.espe.banquito.crm.campaigns.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

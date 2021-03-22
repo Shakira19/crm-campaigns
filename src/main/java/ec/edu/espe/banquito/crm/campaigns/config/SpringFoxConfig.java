@@ -75,7 +75,8 @@ public class SpringFoxConfig {
 
     @Bean
     public SecurityConfiguration security() {
-        return new SecurityConfiguration(null, null, null, "crm-campaigns-api", "Bearer", ApiKeyVehicle.HEADER, "Authorization", ",");
+        return new SecurityConfiguration(null, null, null,
+                "crm-campaigns-api", "Bearer", ApiKeyVehicle.HEADER, "Authorization", ",");
     }
 
 }

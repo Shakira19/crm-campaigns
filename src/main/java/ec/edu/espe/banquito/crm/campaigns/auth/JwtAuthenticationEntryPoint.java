@@ -1,4 +1,4 @@
-package ec.edu.espe.banquito.crm.campaigns.jwtutils;
+package ec.edu.espe.banquito.crm.campaigns.auth;
 
 import java.io.IOException;
 import java.io.Serializable;

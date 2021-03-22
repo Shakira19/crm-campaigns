@@ -1,7 +1,7 @@
 package ec.edu.espe.banquito.crm.campaigns.config;
 
-import ec.edu.espe.banquito.crm.campaigns.jwtutils.JwtAuthenticationEntryPoint;
-import ec.edu.espe.banquito.crm.campaigns.jwtutils.JwtFilter;
+import ec.edu.espe.banquito.crm.campaigns.auth.JwtAuthenticationEntryPoint;
+import ec.edu.espe.banquito.crm.campaigns.auth.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

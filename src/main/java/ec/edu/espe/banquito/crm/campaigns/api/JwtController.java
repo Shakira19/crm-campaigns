@@ -1,6 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.api;
 
-import ec.edu.espe.banquito.crm.campaigns.jwtutils.TokenManager;
+import ec.edu.espe.banquito.crm.campaigns.auth.TokenManager;
 import ec.edu.espe.banquito.crm.campaigns.model.JwtRequestModel;
 import ec.edu.espe.banquito.crm.campaigns.model.JwtResponseModel;
 import ec.edu.espe.banquito.crm.campaigns.service.JwtUserDetailsService;
