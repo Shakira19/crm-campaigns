@@ -1,5 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.api;
 
+import ec.edu.espe.banquito.crm.campaigns.api.dto.ContactabilityRq;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.UpdateException;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -177,17 +179,17 @@ public class ContactabilityRegistryController {
         }
     }
 
-    @PutMapping("/description/{id}")
+    @PutMapping("/details/{id}")
     @ApiOperation(value = "Update description of a client in a campaign ")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Updated successfully"),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 500, message = "Internal Server Error")})
-    public ResponseEntity updateDescription(@PathVariable Integer id, @RequestParam String description) {
+    public ResponseEntity updateDescription(@PathVariable Integer id, @RequestBody ContactabilityRq contactabilityRq) {
         ResponseEntity response;
         try {
             log.info("The description of cotactability registry with id: {}, will be updated", id);
-            this.service.updateContactDescription(id, description);
+            this.service.updateContactDetails(id, contactabilityRq);
             response = ResponseEntity.ok().build();
         } catch (RegistryNotFoundException ex) {
             response = ResponseEntity.notFound().build();

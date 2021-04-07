@@ -1,5 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.api.dto.ContactabilityRq;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
@@ -188,14 +189,16 @@ public class ContactabilityRegistrationService {
         }
     }
     
-    public void updateContactDescription(Integer contactabilityId, String description) 
+    public void updateContactDetails(Integer contactabilityId, ContactabilityRq contactabilityRq) 
             throws RegistryNotFoundException, UpdateException {
         Optional<ContactabilityRegistration> contactabilityToUpdate = 
                 this.contactabilityRegistrationRepo.findById(contactabilityId);
         if (contactabilityToUpdate.isPresent()) {
             try {
                 ContactabilityRegistration contactabilityRetrieved = contactabilityToUpdate.get();
-                contactabilityRetrieved.setDescription(description);
+                contactabilityRetrieved.setDescription(contactabilityRq.getDescription());
+                contactabilityRetrieved.setAcceptedFees(contactabilityRq.getAcceptedFees());
+                contactabilityRetrieved.setProductTotalValue(contactabilityRq.getProductTotalValue());
                 this.contactabilityRegistrationRepo.save(contactabilityRetrieved);
                 log.info("Changed description of contactability with id {}", contactabilityId);
             } catch (Exception e) {
