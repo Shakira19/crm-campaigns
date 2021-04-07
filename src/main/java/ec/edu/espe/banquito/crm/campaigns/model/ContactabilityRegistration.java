@@ -1,5 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -72,5 +73,11 @@ public class ContactabilityRegistration {
     
     @Column(name = "modification_date")
     private Date modificationDate;
+    
+    @Column(name = "product_total_value")
+    private BigDecimal productTotalValue;
+    
+    @Column(name = "product_interest")
+    private Integer productInterest;
 
 }
