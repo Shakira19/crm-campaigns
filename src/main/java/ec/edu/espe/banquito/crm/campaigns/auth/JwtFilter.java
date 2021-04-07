@@ -37,16 +37,6 @@ public class JwtFilter extends OncePerRequestFilter {
         log.debug(tokenHeader);
         String username = null;
         String token = null;
-        Enumeration<String> iterable = request.getHeaderNames();
-        MultiValueMap<String, String> headers = new HttpHeaders();
-        for (Enumeration names = request.getHeaderNames(); names.hasMoreElements();) {
-            String name = (String) names.nextElement();
-            for (Enumeration values = request.getHeaders(name); values.hasMoreElements();) {
-                String value = (String) values.nextElement();
-                log.info("key: {}, value: {}", name, value);
-                headers.add(name, value);
-            }
-        }
         if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             token = tokenHeader.substring(7);
             try {
@@ -58,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } else {
 
-            log.error("Bearer String not found in token {}", request.getHeader("access-control-request-headers"));
+            log.error("Bearer String not found in token");
         }
         if (null != username && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
