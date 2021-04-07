@@ -8,6 +8,7 @@ import ec.edu.espe.banquito.crm.campaigns.model.Campaign;
 import ec.edu.espe.banquito.crm.campaigns.model.ContactabilityRegistration;
 import ec.edu.espe.banquito.crm.campaigns.repository.CampaignRepository;
 import ec.edu.espe.banquito.crm.campaigns.repository.ContactabilityRegistrationRepository;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -141,6 +142,7 @@ public class ContactabilityRegistrationService {
         if (contactabilityToUpdate.isPresent()) {
             Campaign campaignToUpdate = contactabilityToUpdate.get().getCampaign();
             ContactabilityRegistration contactabilityRetrieved = contactabilityToUpdate.get();
+            contactabilityRetrieved.setModificationDate(new Date());
             if (contactabilityRetrieved.getStatus().equals("ASS")) {
                 Integer assignedClients = campaignToUpdate.getNumberAssignedClients();
                 assignedClients--;

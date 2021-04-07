@@ -172,7 +172,7 @@ public class ContactabilityRegistryController {
         } catch (RegistryNotFoundException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("error {}", e.toString());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
