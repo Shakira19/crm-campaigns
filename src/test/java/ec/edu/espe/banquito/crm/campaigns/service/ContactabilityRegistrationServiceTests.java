@@ -1,5 +1,6 @@
 package ec.edu.espe.banquito.crm.campaigns.service;
 
+import ec.edu.espe.banquito.crm.campaigns.api.dto.ContactabilityRq;
 import ec.edu.espe.banquito.crm.campaigns.enums.ContactStatusEnum;
 import ec.edu.espe.banquito.crm.campaigns.exception.NotFoundException;
 import ec.edu.espe.banquito.crm.campaigns.exception.RegistryNotFoundException;
@@ -205,11 +206,12 @@ public class ContactabilityRegistrationServiceTests {
     }
 
     @Test
-    public void GivenIdAndDescriptionUpdateDescription() {
+    public void GivenIdAndContactabilityRqUpdateDetails() {
         when(contactabilityRepo.findById(anyInt())).thenReturn(Optional.of(contactability1));
         when(contactabilityRepo.save(any())).thenReturn(contactability1);
+        ContactabilityRq contactabilityRqSample = new ContactabilityRq();
         try {
-            service.updateContactDescription(1, "");
+            service.updateContactDetails(1, contactabilityRqSample);
         } catch (RegistryNotFoundException ex) {
             Logger.getLogger(ContactabilityRegistrationServiceTests.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UpdateException ex) {
@@ -218,12 +220,13 @@ public class ContactabilityRegistrationServiceTests {
     }
 
     @Test
-    public void GivenIdAndDescriptionThrowUpdateException() {
+    public void GivenIdAndContactabilityRqThrowUpdateException() {
         when(contactabilityRepo.findById(anyInt())).thenReturn(Optional.of(contactability1));
         when(contactabilityRepo.save(any())).thenThrow(IllegalArgumentException.class);
+        ContactabilityRq contactabilityRqSample = new ContactabilityRq();
         try {
-            service.updateContactDescription(1, "");
-            Assertions.assertThrows(UpdateException.class, () -> service.updateContactDescription(1, ""));
+            service.updateContactDetails(1, contactabilityRqSample);
+            Assertions.assertThrows(UpdateException.class, () -> service.updateContactDetails(1, contactabilityRqSample));
         } catch (RegistryNotFoundException ex) {
             Logger.getLogger(ContactabilityRegistrationServiceTests.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UpdateException ex) {
@@ -234,9 +237,10 @@ public class ContactabilityRegistrationServiceTests {
     @Test
     public void GivenIdAndDescriptionThrowRegistryNotFoundException() {
         when(contactabilityRepo.findById(anyInt())).thenReturn(Optional.ofNullable(null));
+        ContactabilityRq contactabilityRqSample = new ContactabilityRq();
         try {
-            service.updateContactDescription(1, "");
-            Assertions.assertThrows(RegistryNotFoundException.class, () -> service.updateContactDescription(1, ""));
+            service.updateContactDetails(1, contactabilityRqSample);
+            Assertions.assertThrows(RegistryNotFoundException.class, () -> service.updateContactDetails(1, contactabilityRqSample));
         } catch (RegistryNotFoundException ex) {
             Logger.getLogger(ContactabilityRegistrationServiceTests.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UpdateException ex) {
